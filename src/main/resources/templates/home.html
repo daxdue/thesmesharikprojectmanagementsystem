@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Система управления проектами Смешариков</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}">
+    <link th:rel="stylesheet" th:href="@{/css/home.css}">
+    <link th:rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+
+</head>
+
+<body class="text-center">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+
+    <header class="masthead mb-auto">
+        <div class="inner">
+            <h3 class="masthead-brand">SPMS</h3>
+            <nav class="nav nav-masthead justify-content-center">
+                <a class="nav-link active" href="#">Главная страница</a>
+                <a class="nav-link" href="#">Контакты</a>
+            </nav>
+        </div>
+    </header>
+
+    <main role="main" class="inner cover">
+        <h1 class="cover-heading">Система менеджмента проектов для Смешариков.</h1>
+        <p class="lead">Создавайте заявки на проекты, управляйте командой, ресурсами и идеями. Всё в одном месте.</p>
+        <p class="lead">
+            <a th:href="@{/signup}" class="btn btn-lg btn-secondary">Присоединиться</a>
+        </p>
+    </main>
+
+    <footer class="mastfoot mt-auto">
+        <div class="inner">
+            <p>Made by <a>SmeshTeam</a></p>
+        </div>
+    </footer>
+</div>
+</body>
+
+</html>

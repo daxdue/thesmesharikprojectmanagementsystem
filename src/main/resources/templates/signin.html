@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в систему</title>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}">
+    <link th:rel="stylesheet" th:href="@{/css/signup.css}">
+</head>
+<body>
+
+<div sec:authorize="isAuthenticated()">
+    <meta http-equiv="refresh" content="0; url=/main" />
+</div>
+
+<body class="text-center">
+<form class="form-signin" th:href="@{/login}" method="post">
+    <img class="mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Войти в систему</h1>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col mb-2">
+                <!--==label class="sr-only">Username</label-->
+                <input type="text" class="form-control" name="username" placeholder="Имя пользователя" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mb-2">
+                <!--label for="inputPassword" class="sr-only">Password</label-->
+                <input type="password" class="form-control" name="password" placeholder="Пароль" required>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mb-2">
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col mb-0">
+                <a th:href="@{/signup}" class="btn btn-link">Нет аккаунта? Зарегистрироваться</a>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-5 mb-3 text-muted">&copy; Smeshariks Inc. 2020</p>
+</form>
+</body>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+</body>
+</html>
