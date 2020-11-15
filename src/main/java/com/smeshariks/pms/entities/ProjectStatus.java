@@ -18,11 +18,15 @@ public class ProjectStatus {
 
     private Timestamp timestamp;
 
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "project_id")
     private Project project;
 
+    /*
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "status_id")
     private Status status;
+     */
 }

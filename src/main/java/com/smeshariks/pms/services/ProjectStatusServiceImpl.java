@@ -24,12 +24,12 @@ public class ProjectStatusServiceImpl implements ProjectStatusService {
     }
 
     public boolean saveProjectStatus(ProjectStatus projectStatus) {
-        Optional<ProjectStatus> projectStatusDB = projectStatusRepository.findById(projectStatus.getId());
+        /*Optional<ProjectStatus> projectStatusDB = projectStatusRepository.findById(projectStatus.getId());
 
         if(projectStatusDB != null) {
             return false;
         }
-
+    */
         projectStatusRepository.save(projectStatus);
         return true;
     }

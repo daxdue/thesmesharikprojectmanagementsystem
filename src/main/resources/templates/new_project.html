@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" th:href="@{/lk}">Главная <span class="sr-only">(current)</span></a>
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
@@ -51,7 +51,7 @@
                 <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
-                            <a class="nav-link" th:href="@{/project/create}">
+                            <a class="nav-link" href="#">
                                 <span data-feather="home">Создать проект</span>
                                 <span class="sr-only">(current)</span>
                             </a>
@@ -94,63 +94,90 @@
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-                <h5 class="my-0 font-weight-normal text-primary">Личный кабинет</h5>
+                <h5 class="my-0 font-weight-normal text-primary">Новый проект</h5>
             </div>
 
             <div class="container">
                 <div class="row">
 
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-primary mb-3">Проекты</span>
-                                <!--h5 class="card-title text-primary">Проекты</h5-->
-                                <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeProjects}"></span></h6>
-                                <p class="card-text">Ожидают: <span th:utext="${notApprovedProjects}"></span></p>
-                                <p class="card-text">Завершено: <span th:utext="${completedProjects}"></span></p>
-                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
-                            </div>
-                        </div>
-                    </div>
+                    <div class="col-md-8 order-md-1">
+                        <form th:action="@{/project/create}" th:object="${projectForm}" method="post">
 
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-success mb-3">Задачи</span>
-                                <!--h5 class="card-title text-primary">Задачи</h5-->
-                                <h6 class="card-subtitle mb-3 text">В работе: </h6>
-                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
-                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-info mb-3">Команда</span>
-                                <!--h5 class="card-title text-primary">Команда</h5-->
-                                <h6 class="card-subtitle mb-3 text">Сотрудников: </h6>
-                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
-                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
-                            </div>
-                        </div>
-                    </div>
-                    <!--th:block th:each="cluster : ${user.getClusters()}">
-                        <div class="col-4 mb-3">
-                            <div class="card" style="width: 18rem">
-                                <div class="card-body">
-                                    <h5 class="card-title" th:utext="${cluster.name}"></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">SN: <span th:utext="${cluster.serialNumber}"></span></h6>
-                                    <p class="card-text">Устройств: <span th:utext="${deviceQuantity    }"></span></p>
-                                    <p class="card-text">Статус: <span th:utext="${cluster.getClusterStatus().name}"></span></p>
-                                    <a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a>
+                            <div class="row mb-1">
+                                <div class="form-group col-md-12 md-3">
+                                    <label for="name">Название проекта</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Введите название проекта" th:field="*{title}" required>
                                 </div>
                             </div>
-                        </div>
-                    </th:block-->
+                            <div th:if="${invalidTitle}" class="row mb-1">
+                                <div class="form-group col-md-12 md-3">
+                                    <div class="alert alert-danger" role="alert">
+                                        Проект с таким названием уже существует
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-1">
+                                <div class="form-group col-md-12 md-3">
+                                    <label for="desc">Описание проекта</label>
+                                    <textarea class="form-control" id="desc" placeholder="Введите описание проекта" th:field="*{description}" rows="3" required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="row mb-1">
+                                <div class="form-group col-md-6 md-3">
+                                    <label for="start">Начало</label>
+                                    <input type="date" class="form-control" id="start" placeholder="дд.мм.гггг" th:field="*{tsStart}"  required>
+                                </div>
+                                <div class="form-group col-md-6 md-3">
+                                    <label for="dead">Окончание</label>
+                                    <input type="date" class="form-control" id="dead" placeholder="дд.мм.гггг" th:field="*{tsStop}"  required>
+                                </div>
+
+
+                            </div>
+
+                            <div th:if="${timingsError}" class="row mb-1">
+                                <div class="form-group col-md-12 md-3">
+                                    <div class="alert alert-danger" role="alert">
+                                        Введите корректные значения в формате "дд.мм.гггг"
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="row mb-1">
+                                <div class="form-group col-md-6 md-3">
+                                    <label for="cost">Стоимость</label>
+                                    <input type="number" class="form-control" id="cost" min="0" step="1" placeholder="Смешкоинов" th:field="*{cost}"  required>
+                                </div>
+                                <div class="form-group col-md-6 md-3">
+                                    <label for="addinfo">Комментарий</label>
+                                    <input type="text" class="form-control" id="addinfo">
+                                </div>
+                            </div>
+
+                            <div th:if="${costError}" class="row mb-1">
+                                <div class="form-group col-md-12 md-3">
+                                    <div class="alert alert-danger" role="alert">
+                                        Введите корректное значение стоимости
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-1">
+                                <div class="col-md-12 md-3">
+                                    <button class="btn btn-primary btn-lg btn-block" type="submit">Создать проект</button>
+                                </div>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+
                 </div>
             </div>
 

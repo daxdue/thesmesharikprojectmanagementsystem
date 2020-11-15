@@ -23,8 +23,13 @@ public class ProjectServiceImpl implements ProjectService {
         return project.orElse(new Project());
     }
 
+    public Project findProjectByTitle(String title) {
+        Project project = projectRepository.findByTitle(title);
+        return project;
+    }
+
     public boolean saveProject(Project project) {
-        Optional<Project> projectDB = projectRepository.findById(project.getId());
+        Project projectDB = projectRepository.findByTitle(project.getTitle());
 
         if(projectDB != null) {
             return false;
