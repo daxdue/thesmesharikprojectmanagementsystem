@@ -1,6 +1,5 @@
 package com.smeshariks.pms.config;
 
-import com.smeshariks.pms.services.SmesharikCredentialsService;
 import com.smeshariks.pms.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

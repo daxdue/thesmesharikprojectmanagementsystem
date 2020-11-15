@@ -1,62 +1,166 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}">
+    <title>Личный кабинет | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
 </head>
 <body>
 
-<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">SpmS</a>
-    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/lk}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
 
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" th:href="@{/logout}">Sign out</a>
-        </li>
-    </ul>
-</nav>
-
-</body>
-
-<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-    <div class="sidebar-sticky pt-3">
-        <ul class="nav flex-column">
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="file"></span>
-                    Проекты
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="shopping-cart"></span>
-                    Заявки
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="users"></span>
-                    Команда
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="bar-chart-2"></span>
-                    Задачи
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="layers"></span>
-                    Чат
-                </a>
-            </li>
         </ul>
     </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
 </nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Создать проект</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Управление пользователями</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Склад</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Личный кабинет</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-4 mb-3">
+                        <div class="card" style="width: 18rem">
+                            <div class="card-body">
+                                <span class="badge badge-pill badge-primary mb-3">Проекты</span>
+                                <!--h5 class="card-title text-primary">Проекты</h5-->
+                                <h6 class="card-subtitle mb-3 text">Активные: </h6>
+                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
+                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4 mb-3">
+                        <div class="card" style="width: 18rem">
+                            <div class="card-body">
+                                <span class="badge badge-pill badge-success mb-3">Задачи</span>
+                                <!--h5 class="card-title text-primary">Задачи</h5-->
+                                <h6 class="card-subtitle mb-3 text">В работе: </h6>
+                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
+                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-4 mb-3">
+                        <div class="card" style="width: 18rem">
+                            <div class="card-body">
+                                <span class="badge badge-pill badge-info mb-3">Команда</span>
+                                <!--h5 class="card-title text-primary">Команда</h5-->
+                                <h6 class="card-subtitle mb-3 text">Сотрудников: </h6>
+                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
+                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
+                            </div>
+                        </div>
+                    </div>
+                    <!--th:block th:each="cluster : ${user.getClusters()}">
+                        <div class="col-4 mb-3">
+                            <div class="card" style="width: 18rem">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:utext="${cluster.name}"></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">SN: <span th:utext="${cluster.serialNumber}"></span></h6>
+                                    <p class="card-text">Устройств: <span th:utext="${deviceQuantity    }"></span></p>
+                                    <p class="card-text">Статус: <span th:utext="${cluster.getClusterStatus().name}"></span></p>
+                                    <a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </th:block-->
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
 </html>

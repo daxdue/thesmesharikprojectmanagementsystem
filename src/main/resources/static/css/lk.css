@@ -1,0 +1,12 @@
+.badge-pill {
+    min-height: 20px;
+    min-width: 80px;
+    padding: 7px;
+    font-size: 16px;
+    font-weight: normal;
+    border-radius: 10px;
+}
+
+.card {
+    border-radius: 10px;
+}

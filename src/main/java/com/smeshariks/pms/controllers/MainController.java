@@ -1,5 +1,7 @@
 package com.smeshariks.pms.controllers;
 
+import com.smeshariks.pms.entities.User;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,9 @@ public class MainController {
 
     @GetMapping("/main")
     public String mainPage(Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", user);
         return "main";
     }
 }

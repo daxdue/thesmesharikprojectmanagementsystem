@@ -1,7 +1,7 @@
 package com.smeshariks.pms.entities;
 
 public enum UserRole {
-    ADMIN("Администратор"),
+    ADMIN("Директор"),
     CUSTOMER("Заказчик"),
     WORKER("Работник"),
     MANAGER("Менеджер"),

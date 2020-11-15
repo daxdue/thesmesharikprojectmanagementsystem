@@ -1,5 +1,6 @@
 package com.smeshariks.pms.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,10 +47,48 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "owner")
+    private List<Project> projects;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "executor")
+    private List<Task> tasks;
+
     @Transient
     private UserRole userRole;
 
     public UserRole getUserRole() {
+        if(roles != null) {
+
+            if(!roles.isEmpty()) {
+                for(Role r : roles) {
+
+                    switch (r.getName()) {
+                        case "ROLE_ADMIN":
+                            userRole = UserRole.ADMIN;
+                            break;
+
+                        case "ROLE_CUSTOMER":
+                            userRole = UserRole.CUSTOMER;
+                            break;
+
+                        case "ROLE_WORKER":
+                            userRole = UserRole.WORKER;
+                            break;
+
+                        case "ROLE_WAREHOUSEMAN":
+                            userRole = UserRole.WAREHOUSEMAN;
+                            break;
+
+                        case "ROLE_MANAGER":
+                            userRole = UserRole.MANAGER;
+                            break;
+
+                    }
+                }
+            }
+        }
         return userRole;
     }
 
