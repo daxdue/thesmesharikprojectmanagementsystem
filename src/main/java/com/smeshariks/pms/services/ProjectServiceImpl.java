@@ -1,10 +1,13 @@
 package com.smeshariks.pms.services;
 
 import com.smeshariks.pms.entities.Project;
+import com.smeshariks.pms.entities.Status;
+import com.smeshariks.pms.entities.Statuses;
 import com.smeshariks.pms.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,5 +54,23 @@ public class ProjectServiceImpl implements ProjectService {
 
     public List<Project> findAllProjects() {
         return projectRepository.findAll();
+    }
+
+    public List<Project> findByStatus(Statuses status) {
+        List<Project> projects = new ArrayList<>();
+
+        switch (status) {
+            case NOT_APPROVED:
+                projects = projectRepository.findByCurrentStatus(Statuses.NOT_APPROVED.getValue());
+                break;
+
+            case IN_WORK:
+                projects = projectRepository.findByCurrentStatus(Statuses.IN_WORK.getValue());
+                break;
+
+            case COMPLETED:
+                projects = projectRepository.findByCurrentStatus(Statuses.COMPLETED.getValue());
+        }
+        return projects;
     }
 }

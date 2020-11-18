@@ -33,6 +33,10 @@ public class Project {
     @Column(name = "dead_time")
     private Timestamp deadTime;
 
+
+    @Column(name = "current_status", nullable = false)
+    private Integer currentStatus;
+
     @Transient
     private String tsStart;
 

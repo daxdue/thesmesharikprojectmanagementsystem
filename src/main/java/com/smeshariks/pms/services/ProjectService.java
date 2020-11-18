@@ -1,6 +1,8 @@
 package com.smeshariks.pms.services;
 
 import com.smeshariks.pms.entities.Project;
+import com.smeshariks.pms.entities.Status;
+import com.smeshariks.pms.entities.Statuses;
 
 import java.util.List;
 
@@ -13,4 +15,5 @@ public interface ProjectService {
     void updateProject(Project project);
     void deleteProject(Integer projectId);
     List<Project> findAllProjects();
+    List<Project> findByStatus(Statuses status);
 }

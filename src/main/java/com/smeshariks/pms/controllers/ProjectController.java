@@ -14,10 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -29,6 +26,11 @@ import java.util.List;
 @Controller
 @RequestMapping("/project")
 public class ProjectController {
+
+    private static final String ALL = "all";
+    private static final String ACTIVE = "active";
+    private static final String INACTIVE = "inactive";
+    private static final String COMPLETED = "completed";
 
     private ProjectService projectService;
     private TimingsService timingsService;
@@ -112,5 +114,42 @@ public class ProjectController {
         }
 
         return "redirect:/main";
+    }
+
+
+    @GetMapping("/get")
+    public String getProjects(@RequestParam(name = "type") String type, Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+
+        List<Project> projects = new ArrayList<>();
+
+        switch (type) {
+            case ALL:
+                projects = projectService.findAllProjects();
+                break;
+
+            case ACTIVE:
+                projects = projectService.findByStatus(Statuses.IN_WORK);
+                break;
+
+            case INACTIVE:
+                projects = projectService.findByStatus(Statuses.NOT_APPROVED);
+                break;
+
+            case COMPLETED:
+                projects = projectService.findByStatus(Statuses.COMPLETED);
+                break;
+        }
+
+        model.addAttribute("user", smesharikDto);
+        model.addAttribute("currentType", type);
+        model.addAttribute("projects", projects);
+
+        return "projects";
     }
 }

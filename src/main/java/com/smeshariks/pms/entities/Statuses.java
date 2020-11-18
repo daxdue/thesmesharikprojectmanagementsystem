@@ -1,10 +1,9 @@
 package com.smeshariks.pms.entities;
 
-
 public enum Statuses {
-    NOT_APPROVED(1, "Не утвержден"),
-    IN_WORK(2, "В работе"),
-    COMPLETED(3, "Завершен");
+    NOT_APPROVED(1, "не утвержден"),
+    IN_WORK(2, "в работе"),
+    COMPLETED(3, "завершен");
 
     private final int value;
     private final String name;
