@@ -1,5 +1,6 @@
 package com.smeshariks.pms.services;
 
+import com.smeshariks.pms.entities.Project;
 import com.smeshariks.pms.entities.ProjectStatus;
 import com.smeshariks.pms.repositories.ProjectStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,10 @@ public class ProjectStatusServiceImpl implements ProjectStatusService {
 
     public void deleteProjectStatus(Integer projectStatusId) {
         projectStatusRepository.deleteById(projectStatusId);
+    }
+
+    public List<ProjectStatus> findProjectStatuses(Project project) {
+        return projectStatusRepository.findProjectStatusesByProject(project);
     }
 
     public List<ProjectStatus> findAllProjectStatuses() {

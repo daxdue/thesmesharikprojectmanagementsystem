@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Проект | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" th:href="@{/project/create}">
+                                <span data-feather="home">Создать проект</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Управление пользователями</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Склад</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Проект</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Название проекта</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.title}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Описание проекта</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.description}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Заказчик</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.owner.name}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Дата начала</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getStartTimestamp()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Дата окончания</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getDeadTimestamp()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Стоимость проекта</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal"><span th:text="${project.getActualConst()}"></span> ₡</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Дата создания</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getAddedTimestamp()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Текущий статус</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getStatus().getName()}"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+
+                        <div sec:authorize="hasRole('ROLE_ADMIN')">
+                            <div class="row mb-3 align-items-center">
+                                <button type="button" class="btn btn-primary">Чат с заказчиком</button>
+                            </div>
+                            <th:block th:if="${project.getCurrentStatus() == 2}">
+                                <div class="row mb-3 align-items-center">
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                        <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                        <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                        <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                        <input type="hidden"  th:value="3" th:attr="name='currentStatus'">
+                                        <button type="submit" class="btn btn-primary">Завершить</button>
+                                    </form>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${project.currentStatus == 1}">
+                                <div class="row mb-3 align-items-center">
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                        <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                        <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                        <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                        <input type="hidden"  th:value="2" th:attr="name='currentStatus'">
+                                        <button type="submit" class="btn btn-primary">Утвердить</button>
+                                    </form>
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                        <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                        <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                        <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                        <input type="hidden"  th:value="4" th:attr="name='currentStatus'">
+                                        <button type="submit" class="btn btn-primary">Отклонить</button>
+                                    </form>
+                                </div>
+                            </th:block>
+                        </div>
+
+                        <div sec:authorize="hasRole('ROLE_CUSTOMER')">
+                            <div class="row mb-3 align-items-center">
+                                <button type="button" class="btn btn-primary">Чат с исполнителем</button>
+                            </div>
+                            <th:block th:if="${project.currentStatus == 1}">
+                                <div class="row mb-3 align-items-center">
+
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" method="get">
+                                        <button type="submit" class="btn btn-primary">Редактировать</button>
+                                    </form>
+
+                                </div>
+                                <div class="row mb-3 align-items-center">
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                        <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                        <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                        <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                        <input type="hidden"  th:value="4" th:attr="name='currentStatus'">
+                                        <button type="submit" class="btn btn-primary">Отклонить</button>
+                                    </form>
+                                </div>
+                            </th:block>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                    <th:block th:if="${project.getCurrentStatus() == 2}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                            <button type="submit" class="btn btn-outline-primary" data-toggle="collapse" data-target="#addTaskForm" aria-expanded="false" aria-controls="addDeviceForm">Добавить задачу</button>
+                        </div>
+                        <div class="collapse multi-collapse" id="addTaskForm">
+                            <div class="col-md-6 order-md-1">
+
+                                <form th:action="@{/task/create}" th:object="${taskForm}" method="post">
+
+                                    <div class="row mb-1">
+                                        <div class="form-group col-md-12 md-3">
+                                            <label for="name">Название задачи</label>
+                                            <input type="text" class="form-control" id="name" placeholder="Введите название задачи" th:field="*{title}" required>
+                                        </div>
+                                    </div>
+                                    <!--div th:if="${invalidTitle}" class="row mb-1">
+                                        <div class="form-group col-md-12 md-3">
+                                            <div class="alert alert-danger" role="alert">
+                                                Проект с таким названием уже существует
+                                            </div>
+                                        </div>
+                                    </div-->
+
+
+                                    <div class="row mb-1">
+                                        <div class="form-group col-md-12 md-3">
+                                            <label for="desc">Описание задачи</label>
+                                            <textarea class="form-control" id="desc" placeholder="Введите описание задачи" th:field="*{description}" rows="3" required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-1">
+                                        <div class="form-group col-md-6 md-3">
+                                            <label for="start">Срок</label>
+                                            <input type="text" class="form-control" id="start" placeholder="дд.мм.гггг" th:field="*{deadTimeStr}"  required>
+                                        </div>
+                                        <div class="form-group col-md-6 md-3">
+                                            <label for="executor">Исполнитель</label>
+
+                                            <select class="custom-select form-control" id="executor" th:field="*{executorId}">
+                                                <option th:value="0" selected>Выберите исполнителя</option>
+                                                <option th:each="executor : ${executors}" th:value="${executor.id}" th:text="${executor.name}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" th:value="${project.id}" th:attr="name='projectId'">
+                                    <!--div th:if="${timingsError}" class="row mb-1">
+                                        <div class="form-group col-md-12 md-3">
+                                            <div class="alert alert-danger" role="alert">
+                                                Введите корректные значения в формате "дд.мм.гггг"
+                                            </div>
+                                        </div>
+                                    </div-->
+
+                                    <div class="row mb-1">
+                                        <div class="col-md-12 md-3">
+                                            <button class="btn btn-primary btn-lg btn-block" type="submit">Создать задачу</button>
+                                        </div>
+                                    </div>
+
+
+                                </form>
+                            </div>
+                        </div>
+                    </th:block>
+                </div>
+
+                <th:block th:if="${project.getCurrentStatus() == 2}">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                        <h5 class="my-0 font-weight-normal text-primary">Кол-во задач <span th:text="${tasks.size()}"></span></h5>
+                    </div>
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Название</th>
+                            <th scope="col">Описание</th>
+                            <th scope="col">Исполнитель</th>
+                            <th scope="col">Создана</th>
+                            <th scope="col">Срок</th>
+                            <th scope="col">Статус</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <th:block th:if="${tasks ne null}">
+                            <tr th:each="task : ${tasks}">
+                                <td th:text="${task.title}">...</td>
+                                <td th:text="${task.description}"></td>
+                                <td th:text="${task.executor.name}"></td>
+                                <td th:text="${task.getStart()}"></td>
+                                <td th:text="${task.getDeadline()}"></td>
+                                <th:block th:if="${task.getStatuses().size() > 0}">
+                                    <td th:text="${task.getLastStatus().status}"></td>
+                                </th:block>
+                            </tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </th:block>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

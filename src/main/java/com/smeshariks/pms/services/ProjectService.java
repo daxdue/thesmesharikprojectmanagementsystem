@@ -3,6 +3,7 @@ package com.smeshariks.pms.services;
 import com.smeshariks.pms.entities.Project;
 import com.smeshariks.pms.entities.Status;
 import com.smeshariks.pms.entities.Statuses;
+import com.smeshariks.pms.entities.User;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface ProjectService {
     void deleteProject(Integer projectId);
     List<Project> findAllProjects();
     List<Project> findByStatus(Statuses status);
+    List<Project> findByUser(User user);
+    List<Project> findByUserAndStatus(User user, Statuses status);
 }

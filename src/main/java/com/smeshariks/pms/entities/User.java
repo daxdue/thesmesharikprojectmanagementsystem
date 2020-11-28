@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ public class User implements UserDetails {
     @Column(name = "name")
     private String name;
 
+    /*
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -45,7 +47,10 @@ public class User implements UserDetails {
             inverseJoinColumns = { @JoinColumn(name = "roles_id") }
     )
     private Set<Role> roles;
-
+    */
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @JsonBackReference
     @OneToMany(mappedBy = "owner")
@@ -59,12 +64,12 @@ public class User implements UserDetails {
     private UserRole userRole;
 
     public UserRole getUserRole() {
-        if(roles != null) {
+        if(role != null) {
 
-            if(!roles.isEmpty()) {
-                for(Role r : roles) {
+            //if(!role.isEmpty()) {
+             //   for(Role r : role) {
 
-                    switch (r.getName()) {
+                    switch (role.getName()) {
                         case "ROLE_ADMIN":
                             userRole = UserRole.ADMIN;
                             break;
@@ -86,8 +91,8 @@ public class User implements UserDetails {
                             break;
 
                     }
-                }
-            }
+           //     }
+         //   }
         }
         return userRole;
     }
@@ -127,7 +132,9 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        List<Role> roles = new ArrayList<>();
+        roles.add(role);
+        return roles;
     }
 
     @Override

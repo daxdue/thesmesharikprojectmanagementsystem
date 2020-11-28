@@ -2,13 +2,12 @@ package com.smeshariks.pms.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import com.smeshariks.pms.utils.TimestampConverter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Entity
@@ -27,6 +26,9 @@ public class Project {
 
     private Double cost;
 
+    @Column(name = "added")
+    private Timestamp added;
+
     @Column(name = "start_time")
     private Timestamp startTime;
 
@@ -35,6 +37,7 @@ public class Project {
 
 
     @Column(name = "current_status", nullable = false)
+    @Getter
     private Integer currentStatus;
 
     @Transient
@@ -42,6 +45,7 @@ public class Project {
 
     @Transient
     private String tsStop;
+
 
     /*
     @OneToOne(cascade = CascadeType.ALL)
@@ -57,10 +61,83 @@ public class Project {
 
     @JsonBackReference
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @OrderBy("start_time DESC")
     private List<Task> tasks;
+
 
     @OneToMany(mappedBy = "project", fetch = FetchType.EAGER)
     private List<ProjectStatus> statuses;
 
+    public String getStartTimestamp() {
+        return TimestampConverter.convert(startTime, false);
+    }
 
+    public String getDeadTimestamp() {
+        return TimestampConverter.convert(deadTime, false);
+    }
+
+    public String getAddedTimestamp() {
+        return TimestampConverter.convert(added, false);
+    }
+
+    public int getActualConst() {
+        return (cost.intValue());
+    }
+
+    public Statuses getStatus() {
+
+        Statuses statuses = Statuses.UNKNOWN;
+
+        switch (currentStatus) {
+            case 1:
+                statuses = Statuses.NOT_APPROVED;
+                break;
+
+            case 2:
+                statuses = Statuses.IN_WORK;
+                break;
+
+            case 3:
+                statuses = Statuses.COMPLETED;
+                break;
+
+            case 4:
+                statuses = Statuses.REJECTED;
+                break;
+        }
+
+        return statuses;
+    }
+
+    public void convertToStringTimestamp() {
+        if((startTime != null) && (deadTime != null)) {
+            tsStart = getStartTimestamp();
+            tsStop = getDeadTimestamp();
+        }
+    }
+
+
+    public int calculateProgress() {
+
+        int allTasks = 0;
+        int completed = 0;
+        int progress = 0;
+
+        if(tasks != null) {
+            allTasks = tasks.size();
+            for(Task task : tasks) {
+                if(task.getStatuses() != null) {
+                    if(task.getLastStatus().getStatus() == Statuses.COMPLETED.getName()) {
+                        completed++;
+                    }
+                }
+            }
+        }
+
+        if((allTasks != 0) && (completed != 0)) {
+            progress = (completed / allTasks) * 100;
+        }
+
+        return 50;
+    }
 }

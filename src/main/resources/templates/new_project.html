@@ -95,84 +95,168 @@
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
                 <h5 class="my-0 font-weight-normal text-primary">Новый проект</h5>
+
+                <form th:action="@{/main}" method="get">
+                    <button type="submit" class="btn btn-link">Назад</button>
+                </form>
+
             </div>
 
             <div class="container">
                 <div class="row">
 
-                    <div class="col-md-8 order-md-1">
-                        <form th:action="@{/project/create}" th:object="${projectForm}" method="post">
+                    <div class="col-md-8 order-md-1 mx-auto">
 
-                            <div class="row mb-1">
-                                <div class="form-group col-md-12 md-3">
-                                    <label for="name">Название проекта</label>
-                                    <input type="text" class="form-control" id="name" placeholder="Введите название проекта" th:field="*{title}" required>
-                                </div>
-                            </div>
-                            <div th:if="${invalidTitle}" class="row mb-1">
-                                <div class="form-group col-md-12 md-3">
-                                    <div class="alert alert-danger" role="alert">
-                                        Проект с таким названием уже существует
+                        <th:block th:if="${isEdit}">
+                            <form th:action="@{/project/edit}" th:object="${projectForm}" method="post">
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <label for="name">Название проекта</label>
+                                        <input type="text" class="form-control" id="name" placeholder="Введите название проекта" th:field="*{title}" required>
                                     </div>
                                 </div>
-                            </div>
-
-
-                            <div class="row mb-1">
-                                <div class="form-group col-md-12 md-3">
-                                    <label for="desc">Описание проекта</label>
-                                    <textarea class="form-control" id="desc" placeholder="Введите описание проекта" th:field="*{description}" rows="3" required></textarea>
-                                </div>
-                            </div>
-
-                            <div class="row mb-1">
-                                <div class="form-group col-md-6 md-3">
-                                    <label for="start">Начало</label>
-                                    <input type="date" class="form-control" id="start" placeholder="дд.мм.гггг" th:field="*{tsStart}"  required>
-                                </div>
-                                <div class="form-group col-md-6 md-3">
-                                    <label for="dead">Окончание</label>
-                                    <input type="date" class="form-control" id="dead" placeholder="дд.мм.гггг" th:field="*{tsStop}"  required>
-                                </div>
-
-
-                            </div>
-
-                            <div th:if="${timingsError}" class="row mb-1">
-                                <div class="form-group col-md-12 md-3">
-                                    <div class="alert alert-danger" role="alert">
-                                        Введите корректные значения в формате "дд.мм.гггг"
+                                <div th:if="${invalidTitle}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Проект с таким названием уже существует
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
 
 
-                            <div class="row mb-1">
-                                <div class="form-group col-md-6 md-3">
-                                    <label for="cost">Стоимость</label>
-                                    <input type="number" class="form-control" id="cost" min="0" step="1" placeholder="Смешкоинов" th:field="*{cost}"  required>
-                                </div>
-                                <div class="form-group col-md-6 md-3">
-                                    <label for="addinfo">Комментарий</label>
-                                    <input type="text" class="form-control" id="addinfo">
-                                </div>
-                            </div>
-
-                            <div th:if="${costError}" class="row mb-1">
-                                <div class="form-group col-md-12 md-3">
-                                    <div class="alert alert-danger" role="alert">
-                                        Введите корректное значение стоимости
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <label for="desc">Описание проекта</label>
+                                        <textarea class="form-control" id="desc" placeholder="Введите описание проекта" th:field="*{description}" rows="3" required></textarea>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="row mb-1">
-                                <div class="col-md-12 md-3">
-                                    <button class="btn btn-primary btn-lg btn-block" type="submit">Создать проект</button>
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="start">Начало</label>
+                                        <input type="text" class="form-control" id="start" placeholder="дд.мм.гггг" th:field="*{tsStart}"  required>
+                                    </div>
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="dead">Окончание</label>
+                                        <input type="text" class="form-control" id="dead" placeholder="дд.мм.гггг" th:field="*{tsStop}"  required>
+                                    </div>
+
+
                                 </div>
-                            </div>
 
-                        </form>
+                                <div th:if="${timingsError}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Введите корректные значения в формате "дд.мм.гггг"
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="cost">Стоимость</label>
+                                        <input type="number" class="form-control" id="cost" min="0" step="1" placeholder="Смешкоинов" th:field="*{cost}"  required>
+                                    </div>
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="addinfo">Комментарий</label>
+                                        <input type="text" class="form-control" id="addinfo">
+                                    </div>
+                                </div>
+
+                                <div th:if="${costError}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Введите корректное значение стоимости
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-1">
+                                    <div class="col-md-12 md-3">
+                                        <button class="btn btn-primary btn-lg btn-block" type="submit">Создать проект</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </th:block>
+
+                        <th:block th:unless="${isEdit}">
+                            <form th:action="@{/project/create}" th:object="${projectForm}" method="post">
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <label for="name_p">Название проекта</label>
+                                        <input type="text" class="form-control" id="name_p" placeholder="Введите название проекта" th:field="*{title}" required>
+                                    </div>
+                                </div>
+                                <div th:if="${invalidTitle}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Проект с таким названием уже существует
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <label for="desc_p">Описание проекта</label>
+                                        <textarea class="form-control" id="desc_p" placeholder="Введите описание проекта" th:field="*{description}" rows="3" required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="start_p">Начало</label>
+                                        <input type="text" class="form-control" id="start_p" placeholder="дд.мм.гггг" th:field="*{tsStart}"  required>
+                                    </div>
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="dead_p">Окончание</label>
+                                        <input type="text" class="form-control" id="dead_p" placeholder="дд.мм.гггг" th:field="*{tsStop}"  required>
+                                    </div>
+
+
+                                </div>
+
+                                <div th:if="${timingsError}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Введите корректные значения в формате "дд.мм.гггг"
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="row mb-1">
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="cost_p">Стоимость</label>
+                                        <input type="number" class="form-control" id="cost_p" min="0" step="1" placeholder="Смешкоинов" th:field="*{cost}"  required>
+                                    </div>
+                                    <div class="form-group col-md-6 md-3">
+                                        <label for="addinfo_p">Комментарий</label>
+                                        <input type="text" class="form-control" id="addinfo_p">
+                                    </div>
+                                </div>
+
+                                <div th:if="${costError}" class="row mb-1">
+                                    <div class="form-group col-md-12 md-3">
+                                        <div class="alert alert-danger" role="alert">
+                                            Введите корректное значение стоимости
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-1">
+                                    <div class="col-md-12 md-3">
+                                        <button class="btn btn-primary btn-lg btn-block" type="submit">Создать проект</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </th:block>
+
 
                     </div>
 

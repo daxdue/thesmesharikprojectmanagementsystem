@@ -1,7 +1,10 @@
 package com.smeshariks.pms.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -20,8 +23,11 @@ public class ProjectStatus {
 
     private String status;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Project project;
 
     /*

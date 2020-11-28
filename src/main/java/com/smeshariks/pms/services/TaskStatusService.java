@@ -12,5 +12,5 @@ public interface TaskStatusService {
     void updateTaskStatus(TaskStatus taskStatus);
     void deleteTaskStatus(Integer taskStatusId);
     List<TaskStatus> findAllTaskStatuses();
-
+    TaskStatus findLastStatus(Task task);
 }

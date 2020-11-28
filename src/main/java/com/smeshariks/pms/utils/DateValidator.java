@@ -1,5 +1,6 @@
 package com.smeshariks.pms.utils;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,6 +19,7 @@ public class DateValidator implements Validator{
     private Timestamp tsStart;
     private Timestamp tsDead;
 
+    public DateValidator() {}
     public DateValidator(String timestampStart, String timestampDead){
         this.timestampStart = timestampStart;
         this.timestampDead = timestampDead;
@@ -28,6 +30,33 @@ public class DateValidator implements Validator{
         this.tsDead = tsDead;
     }
 
+    public boolean isValidSingle(String timestamp) {
+        boolean res = true;
+
+        DateFormat dateFormat = new SimpleDateFormat(this.dateFormat);
+
+        try {
+            Date checkValue = dateFormat.parse(timestamp);
+        } catch (ParseException e) {
+            res = false;
+        }
+
+        return res;
+    }
+
+    public Timestamp convertSingle(String timestamp) {
+        Timestamp timestamp1 = null;
+
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(this.dateFormat);
+            Date date = dateFormat.parse(timestamp);
+            timestamp1 = new Timestamp(date.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return timestamp1;
+    }
 
     public boolean isValid() {
 

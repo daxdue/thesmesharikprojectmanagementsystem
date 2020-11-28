@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
             <li class="nav-item active">
-                <a class="nav-link" th:href="@{/lk}">Главная <span class="sr-only">(current)</span></a>
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
@@ -93,64 +93,101 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-                <h5 class="my-0 font-weight-normal text-primary">Личный кабинет</h5>
-            </div>
 
-            <div class="container">
-                <div class="row">
-
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-primary mb-3">Проекты</span>
-                                <!--h5 class="card-title text-primary">Проекты</h5-->
-                                <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeProjects}"></span></h6>
-                                <p class="card-text">Ожидают: <span th:utext="${notApprovedProjects}"></span></p>
-                                <p class="card-text">Завершено: <span th:utext="${completedProjects}"></span></p>
-                                <a th:href="@{/project/get(type='active')}" class="card-link stretched-link">Подробнее</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-success mb-3">Задачи</span>
-                                <!--h5 class="card-title text-primary">Задачи</h5-->
-                                <h6 class="card-subtitle mb-3 text">В работе: </h6>
-                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
-                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-4 mb-3">
-                        <div class="card" style="width: 18rem">
-                            <div class="card-body">
-                                <span class="badge badge-pill badge-info mb-3">Команда</span>
-                                <!--h5 class="card-title text-primary">Команда</h5-->
-                                <h6 class="card-subtitle mb-3 text">Сотрудников: </h6>
-                                <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
-                                <!--a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a-->
-                            </div>
-                        </div>
-                    </div>
-                    <!--th:block th:each="cluster : ${user.getClusters()}">
+            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Рабочий процесс</h5>
+                </div>
+                <div class="container">
+                    <div class="row">
                         <div class="col-4 mb-3">
-                            <div class="card" style="width: 18rem">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-primary">Проекты</span>
+                                </div>
                                 <div class="card-body">
-                                    <h5 class="card-title" th:utext="${cluster.name}"></h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">SN: <span th:utext="${cluster.serialNumber}"></span></h6>
-                                    <p class="card-text">Устройств: <span th:utext="${deviceQuantity    }"></span></p>
-                                    <p class="card-text">Статус: <span th:utext="${cluster.getClusterStatus().name}"></span></p>
-                                    <a th:href="@{/cluster/{sn}(sn=${cluster.getSerialNumber()})}" class="card-link stretched-link">Подробнее</a>
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeProjects}"></span></h6>
+                                    <p class="card-text">Ожидают: <span th:utext="${notApprovedProjects}"></span></p>
+                                    <p class="card-text">Завершено: <span th:utext="${completedProjects}"></span></p>
+                                    <a th:href="@{/project/get(type='active')}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>
-                    </th:block-->
+
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-success">Задачи</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:text="${tasks.size()}"></span></h6>
+                                    <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
+                                    <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                    <a th:href="@{/tasks}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-info">Команда</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">Сотрудников: </h6>
+                                    <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
+                                    <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                    <a th:href="@{/team}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div sec:authorize="hasRole('ROLE_CUSTOMER')">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Мои проекты</h5>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-primary">Проекты</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeProjects}"></span></h6>
+                                    <p class="card-text">Ожидают: <span th:utext="${notApprovedProjects}"></span></p>
+                                    <p class="card-text">Завершено: <span th:utext="${completedProjects}"></span></p>
+                                    <a th:href="@{/project/get(type='active')}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div sec:authorize="hasRole('ROLE_WORKER')">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Мои задачи</h5>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-success">Задачи</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${tasks.size()}"></span></h6>
+                                    <p class="card-text">Ожидают: <span th:utext="${tasks.size()}"></span></p>
+                                    <p class="card-text">Завершено: <span th:utext="${tasks.size()}"></span></p>
+                                    <a th:href="@{/project/get(type='active')}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

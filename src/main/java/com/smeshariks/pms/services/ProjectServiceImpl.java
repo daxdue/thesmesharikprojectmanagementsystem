@@ -3,6 +3,7 @@ package com.smeshariks.pms.services;
 import com.smeshariks.pms.entities.Project;
 import com.smeshariks.pms.entities.Status;
 import com.smeshariks.pms.entities.Statuses;
+import com.smeshariks.pms.entities.User;
 import com.smeshariks.pms.repositories.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,8 @@ public class ProjectServiceImpl implements ProjectService {
     public void updateProject(Project project) {
 
         if(project != null) {
-            projectRepository.save(project);
+            projectRepository.edit(project.getDescription(), project.getCost(), project.getStartTime(),
+                    project.getDeadTime(), project.getCurrentStatus(), project.getId());
         }
     }
 
@@ -70,7 +72,20 @@ public class ProjectServiceImpl implements ProjectService {
 
             case COMPLETED:
                 projects = projectRepository.findByCurrentStatus(Statuses.COMPLETED.getValue());
+                break;
+
+            case REJECTED:
+                projects = projectRepository.findByCurrentStatus(Statuses.REJECTED.getValue());
+                break;
         }
         return projects;
+    }
+
+    public List<Project> findByUser(User user) {
+        return projectRepository.findAllByOwner(user);
+    }
+
+    public List<Project> findByUserAndStatus(User user, Statuses status) {
+        return projectRepository.findAllByOwnerAndCurrentStatus(user, status.getValue());
     }
 }

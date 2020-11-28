@@ -1,5 +1,6 @@
 package com.smeshariks.pms.services;
 
+import com.smeshariks.pms.entities.Task;
 import com.smeshariks.pms.entities.TaskStatus;
 import com.smeshariks.pms.repositories.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +25,12 @@ public class TaskStatusServiceImpl implements TaskStatusService{
     }
 
     public boolean saveTaskStatus(TaskStatus taskStatus) {
-        Optional<TaskStatus> taskStatusDB = taskStatusRepository.findById(taskStatus.getId());
+        /*Optional<TaskStatus> taskStatusDB = taskStatusRepository.findById(taskStatus.getId());
 
         if(taskStatusDB != null) {
             return false;
         }
-
+        */
         taskStatusRepository.save(taskStatus);
         return true;
     }
@@ -46,6 +47,10 @@ public class TaskStatusServiceImpl implements TaskStatusService{
 
     public List<TaskStatus> findAllTaskStatuses() {
         return taskStatusRepository.findAll();
+    }
+
+    public TaskStatus findLastStatus(Task task) {
+        return taskStatusRepository.findByTaskOrderByTimestampDesc(task);
     }
 }
 

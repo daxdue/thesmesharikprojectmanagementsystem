@@ -1,6 +1,8 @@
 package com.smeshariks.pms.services;
 
+import com.smeshariks.pms.entities.Project;
 import com.smeshariks.pms.entities.Task;
+import com.smeshariks.pms.entities.User;
 import com.smeshariks.pms.repositories.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,6 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public boolean saveTask(Task task) {
-        Optional<Task> taskDB = taskRepository.findById(task.getId());
-
-        if(taskDB != null) {
-            return false;
-        }
 
         taskRepository.save(task);
         return true;
@@ -47,5 +44,13 @@ public class TaskServiceImpl implements TaskService {
 
     public List<Task> findAllTasks() {
         return taskRepository.findAll();
+    }
+
+    public List<Task> findTasksByProject(Project project) {
+       return taskRepository.findTasksByProject(project);
+    }
+
+    public List<Task> findTasksByExecutor(User user) {
+        return taskRepository.findTasksByExecutor(user);
     }
 }

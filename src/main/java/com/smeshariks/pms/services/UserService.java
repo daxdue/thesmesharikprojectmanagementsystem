@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -60,23 +61,28 @@ public class UserService implements UserDetailsService {
 
         switch (user.getUserRole()) {
             case ADMIN:
-                user.setRoles(Collections.singleton(new Role(1L, "ROLE_ADMIN")));
+                user.setRole(new Role(1, "ROLE_ADMIN"));
+                //user.setRoles(Collections.singleton(new Role(1, "ROLE_ADMIN")));
                 break;
 
             case CUSTOMER:
-                user.setRoles(Collections.singleton(new Role(2L, "ROLE_CUSTOMER")));
+                user.setRole(new Role(2, "ROLE_CUSTOMER"));
+                //user.setRoles(Collections.singleton(new Role(2, "ROLE_CUSTOMER")));
                 break;
 
             case WORKER:
-                user.setRoles(Collections.singleton(new Role(3L, "ROLE_WORKER")));
+                user.setRole(new Role(3, "ROLE_WORKER"));
+                //user.setRoles(Collections.singleton(new Role(3, "ROLE_WORKER")));
                 break;
 
             case MANAGER:
-                user.setRoles(Collections.singleton(new Role(4L, "ROLE_CUSTOMER")));
+                user.setRole(new Role(4, "ROLE_CUSTOMER"));
+                //user.setRoles(Collections.singleton(new Role(4, "ROLE_CUSTOMER")));
                 break;
 
             case WAREHOUSEMAN:
-                user.setRoles(Collections.singleton(new Role(5L, "ROLE_WAREHOUSEMAN")));
+                user.setRole(new Role(5, "ROLE_WAREHOUSEMAN"));
+                //user.setRoles(Collections.singleton(new Role(5, "ROLE_WAREHOUSEMAN")));
                 break;
         }
 
@@ -95,4 +101,7 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public List<User> findUsersByRole(Role role) {
+        return userRepository.findUsersByRole(role);
+    }
 }

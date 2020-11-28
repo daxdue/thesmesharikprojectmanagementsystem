@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Личный кабинет | S P M S</title>
+    <title>Проекты | S P M S</title>
     <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
     <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
     <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
@@ -112,6 +112,10 @@
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/project/get(type='completed')}">Завершены</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
                     </th:block>
                     <th:block th:case="'inactive'">
                         <li class="nav-item">
@@ -124,6 +128,10 @@
 
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/project/get(type='completed')}">Завершены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
                         </li>
                     </th:block>
                     <th:block th:case="'completed'">
@@ -138,6 +146,27 @@
                         <li class="nav-item">
                             <a class="nav-link active" th:href="@{/project/get(type='completed')}">Завершены</a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+                    </th:block>
+                    <th:block th:case="'rejected'">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='active')}">В работе</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='inactive')}">В ожидании</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='completed')}">Завершены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
                     </th:block>
                 </th:block>
 
@@ -149,19 +178,28 @@
 
                     <th:block th:if="${projects.size()!=0}">
                         <th:block th:each="project : ${projects}">
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <h5 class="card-header" th:text="${project.title}">Project title</h5>
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${project.title}">Project title</h5>
                                     <div class="card-body">
-                                        <h5 class="card-title" th:text="${project.description}">Project description</h5>
-                                        <p class="card-text">Заказчик: <span th:text="${project.owner.name}"></span></p>
+                                        <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                        <p class="card-text font-weight-bold">Заказчик: <span class="font-weight-normal" th:text="${project.owner.name}"></span></p>
+                                        <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${project.getStartTimestamp()}"></span></p>
+                                        <p class="card-text font-weight-bold">Окончание: <span class="font-weight-normal" th:text="${project.getDeadTimestamp()}"></span></p>
+                                        <p class="card-text font-weight-bold">Стоимость: <span class="font-weight-normal" th:text="${project.getActualConst()}"></span><span class="font-weight-normal"> ₡</span></p>
+                                        <p class="card-text font-weight-bold">Создан: <span class="font-weight-normal" th:text="${project.getAddedTimestamp()}"></span></p>
+                                        <div class="progress mb-1">
+                                            <div class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${project.calculateProgress()}" th:style="'width:' + ${project.calculateProgress()} + '%'"></div>
+                                        </div>
+
+                                        <a th:href="@{/project/{id}(id=${project.id})}" class="card-link stretched-link">К деталям</a>
                                     </div>
                                 </div>
                             </div>
                         </th:block>
                     </th:block>
 
-                    <th:block th:if="${projects.size()==0}">
+                    <th:block th:if="${projects.size() == 0}">
                         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
                             <h6 class="my-0 font-weight-light text-secondary">Нет проектов в данной категории</h6>
                         </div>
