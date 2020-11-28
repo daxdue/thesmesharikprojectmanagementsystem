@@ -73,7 +73,7 @@ public class TaskController {
             TaskStatus taskStatus = new TaskStatus();
             taskStatus.setTimestamp(new Timestamp(new Date().getTime()));
             taskStatus.setTask(task);
-            taskStatus.setStatus(Statuses.WAIT.getName());
+            taskStatus.setStatus(Statuses.WAIT.getValue());
             taskService.saveTask(task);
             taskStatusService.saveTaskStatus(taskStatus);
         }

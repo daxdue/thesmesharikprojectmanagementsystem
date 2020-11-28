@@ -21,7 +21,7 @@ public class TaskStatus {
 
     private Timestamp timestamp;
 
-    private String status;
+    private Integer status;
 
     @JsonManagedReference
     @ManyToOne
@@ -35,4 +35,37 @@ public class TaskStatus {
     @JoinColumn(name = "status_id")
     private Status status;
      */
+
+    public String getStringValue() {
+
+        String statusStr = "не известен";
+
+        switch (status) {
+            case 1:
+                statusStr = "не утверждена";
+                break;
+
+            case 2:
+                statusStr = "в работе";
+                break;
+
+            case 3:
+                statusStr = "завершена";
+                break;
+
+            case 4:
+                statusStr = "отклонена";
+
+            case 5:
+                statusStr = "ожидает";
+                break;
+
+            case 6:
+                statusStr = "просрочена";
+                break;
+
+        }
+
+        return statusStr;
+    }
 }

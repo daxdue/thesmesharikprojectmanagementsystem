@@ -60,7 +60,7 @@ public class Project {
     private User owner;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "project")
     @OrderBy("start_time DESC")
     private List<Task> tasks;
 
@@ -119,25 +119,27 @@ public class Project {
 
     public int calculateProgress() {
 
-        int allTasks = 0;
-        int completed = 0;
-        int progress = 0;
+        double allTasks = 0;
+        double completed = 0;
+        double progress = 0;
 
         if(tasks != null) {
             allTasks = tasks.size();
             for(Task task : tasks) {
                 if(task.getStatuses() != null) {
-                    if(task.getLastStatus().getStatus() == Statuses.COMPLETED.getName()) {
+                    if(task.getLastStatus().getStatus() == Statuses.COMPLETED.getValue()) {
                         completed++;
                     }
                 }
             }
+
         }
+
 
         if((allTasks != 0) && (completed != 0)) {
             progress = (completed / allTasks) * 100;
         }
-
-        return 50;
+        
+        return (int)progress;
     }
 }

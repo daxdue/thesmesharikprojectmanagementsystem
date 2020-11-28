@@ -337,7 +337,7 @@
                                 <td th:text="${task.getStart()}"></td>
                                 <td th:text="${task.getDeadline()}"></td>
                                 <th:block th:if="${task.getStatuses().size() > 0}">
-                                    <td th:text="${task.getLastStatus().status}"></td>
+                                    <td th:text="${task.getLastStatus().getStringValue()}"></td>
                                 </th:block>
                             </tr>
                         </th:block>
