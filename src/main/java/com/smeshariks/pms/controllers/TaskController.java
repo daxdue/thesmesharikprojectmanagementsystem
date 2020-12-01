@@ -12,9 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Timestamp;
@@ -79,6 +77,21 @@ public class TaskController {
         }
 
         return "redirect:/project/" + project.getId();
+    }
+
+    /*
+    TODO Настроить права доступа только админу к этому контроллеру
+     */
+    @GetMapping("/delete/{id}")
+    public String deleteTask(@PathVariable Integer id) {
+
+        Task task = taskService.findTask(id);
+        if(task != null) {
+            taskService.deleteTask(task.getId());
+            return "redirect:/project/" + task.getProject().getId();
+        }
+
+        return "home";
     }
 
 }

@@ -139,7 +139,7 @@ public class Project {
         if((allTasks != 0) && (completed != 0)) {
             progress = (completed / allTasks) * 100;
         }
-        
+
         return (int)progress;
     }
 }
