@@ -54,6 +54,10 @@ public class Task {
     @OrderBy("timestamp DESC")
     private List<TaskStatus> statuses;
 
+    @JsonBackReference
+    @OneToOne(mappedBy = "task")
+    private TaskReport taskReport;
+
     @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "executor_id")

@@ -94,4 +94,111 @@ public class TaskController {
         return "home";
     }
 
+    @GetMapping("/{id}/{action}")
+    public String updateTask(@PathVariable Integer id, @PathVariable String action, Model model) {
+
+        Task task = taskService.findTask(id);
+        if(task != null) {
+
+            TaskStatus taskStatus = new TaskStatus();
+            taskStatus.setTimestamp(new Timestamp(new Date().getTime()));
+            taskStatus.setTask(task);
+
+            switch (action) {
+
+                case "start":
+                    taskStatus.setStatus(Statuses.IN_WORK.getValue());
+                    break;
+
+                case "complete":
+                    taskStatus.setStatus(Statuses.NOT_APPROVED.getValue());
+                    break;
+
+                case "approve":
+                    taskStatus.setStatus(Statuses.COMPLETED.getValue());
+                    break;
+
+                default:
+                    taskStatus.setStatus(Statuses.UNKNOWN.getValue());
+                    break;
+            }
+
+            taskStatusService.saveTaskStatus(taskStatus);
+        }
+        return "redirect:/task";
+    }
+
+    @PostMapping("/update")
+    public String updateTask(@ModelAttribute("taskReport") TaskReport taskReport) {
+
+        if(taskReport != null) {
+            Task task = taskService.findTask(taskReport.getTask_id());
+            if(task != null) {
+                TaskStatus taskStatus = new TaskStatus();
+                taskStatus.setTimestamp(new Timestamp(new Date().getTime()));
+                taskStatus.setTask(task);
+                taskStatus.setStatus(Statuses.NOT_APPROVED.getValue());
+                taskReport.setTask(task);
+                taskStatusService.saveTaskStatus(taskStatus);
+                taskStatusService.saveTaskReport(taskReport);
+            }
+        }
+
+        return "redirect:/task";
+    }
+
+    @GetMapping
+    public String userTasks(Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+
+        List<Task> inWorkTasks = new ArrayList<>();
+        List<Task> waitExecuteTasks = new ArrayList<>();
+        List<Task> waitApproveTasks = new ArrayList<>();
+        List<Task> allTasks = new ArrayList<>();
+
+        if(smesharikDto.getUserRole() == UserRole.ADMIN) {
+
+            allTasks = taskService.findAllTasks();
+
+        } else {
+
+            allTasks = taskService.findTasksByExecutor(user);
+        }
+
+
+        if(allTasks != null) {
+
+            for (Task task : allTasks) {
+
+                switch (task.getLastStatus().getStatusValue()) {
+
+                    case WAIT:
+                        waitExecuteTasks.add(task);
+                        break;
+
+                    case IN_WORK:
+                        inWorkTasks.add(task);
+                        break;
+
+                    case NOT_APPROVED:
+                        waitApproveTasks.add(task);
+                        break;
+                }
+            }
+        }
+
+        model.addAttribute("user", smesharikDto);
+        model.addAttribute("workflowTasks", inWorkTasks);
+        model.addAttribute("waitApproveTasks", waitApproveTasks);
+        model.addAttribute("waitExecuteTasks", waitExecuteTasks);
+        model.addAttribute("taskReport", new TaskReport());
+
+        return "tasks";
+    }
+
 }

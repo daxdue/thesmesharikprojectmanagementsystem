@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface TaskRepository extends JpaRepository<Task,Integer> {
 
-    List<Task> findTasksByProject(Project project);
+    List<Task> findTasksByProjectOrderByStartTimeDesc(Project project);
     List<Task> findTasksByExecutor(User user);
 }

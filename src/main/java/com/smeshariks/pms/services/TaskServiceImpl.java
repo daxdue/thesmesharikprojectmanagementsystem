@@ -47,7 +47,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public List<Task> findTasksByProject(Project project) {
-       return taskRepository.findTasksByProject(project);
+       return taskRepository.findTasksByProjectOrderByStartTimeDesc(project);
     }
 
     public List<Task> findTasksByExecutor(User user) {

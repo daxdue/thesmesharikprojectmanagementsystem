@@ -68,4 +68,35 @@ public class TaskStatus {
 
         return statusStr;
     }
+
+    public Statuses getStatusValue() {
+
+        Statuses statuses = Statuses.UNKNOWN;
+
+        switch (status) {
+            case 1:
+                statuses = Statuses.NOT_APPROVED;
+                break;
+
+            case 2:
+                statuses = Statuses.IN_WORK;
+                break;
+
+            case 3:
+                statuses = Statuses.COMPLETED;
+                break;
+
+            case 4:
+                statuses = Statuses.REJECTED;
+
+            case 5:
+                statuses = Statuses.WAIT;
+                break;
+
+            case 6:
+                statuses = Statuses.REJECTED;
+                break;
+        }
+        return statuses;
+    }
 }

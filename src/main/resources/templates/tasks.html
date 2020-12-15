@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Проекты | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" th:href="@{/project/create}">
+                                <span data-feather="home">Создать проект</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Управление пользователями</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Склад</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Активные задачи</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${workflowTasks.size()!=0}">
+                        <th:block th:each="task : ${workflowTasks}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${task.title}">Project title</h5>
+                                    <div class="card-body">
+                                        <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                        <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                                            <p class="card-text font-weight-bold">Исполнитель: <span class="font-weight-normal" th:text="${task.executor.name}"></span></p>
+                                        </div>
+                                        <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${task.project.title}"></span></p>
+                                        <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${task.getStart()}"></span></p>
+                                        <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${task.getDeadline()}"></span></p>
+
+                                        <!--a th:href="@{/task/{id}(id=${task.id})}" class="card-link stretched-link">К деталям</a-->
+                                        <!--a type="button" class="card-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">
+                                            Подробнее
+                                        </a-->
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- Выполняемые -->
+                            <div class="modal fade" th:id="'task' + ${task.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${task.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${task.id}" th:text="${task.title}"></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Описание</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.description}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Проект</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.project.title}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Дедлайн</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.getDeadline()}"></p>
+                                                </div>
+                                            </div>
+                                            <div sec:authorize="hasRole('ROLE_WORKER')">
+                                                <form th:action="@{/task/update}" th:object="${taskReport}" method="post">
+                                                    <div class="row mb-2">
+                                                        <div class="form-group col-md-12 md-3">
+                                                            <label for="desc">Отчет</label>
+                                                            <textarea class="form-control" id="desc" placeholder="Напишите отчет" th:field="*{report}" rows="3" required></textarea>
+                                                            <input type="hidden" th:value="${task.id}" th:attr="name='task_id'">
+                                                        </div>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Завершить</button>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                        <!--div class="modal-footer">
+
+                                        </div-->
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${workflowTasks.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет активных задач</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Ожидают выполнения</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${waitExecuteTasks.size()!=0}">
+                        <th:block th:each="task : ${waitExecuteTasks}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${task.title}">Project title</h5>
+                                    <div class="card-body">
+                                        <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                        <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                                            <p class="card-text font-weight-bold">Исполнитель: <span class="font-weight-normal" th:text="${task.executor.name}"></span></p>
+                                        </div>
+                                        <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${task.project.title}"></span></p>
+                                        <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${task.getStart()}"></span></p>
+                                        <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${task.getDeadline()}"></span></p>
+
+                                        <!--a th:href="@{/task/{id}(id=${task.id})}" class="card-link stretched-link">К деталям</a-->
+                                        <!--a type="button" class="card-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">
+                                            Подробнее
+                                        </a-->
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Задачи в ожидании -->
+                            <div class="modal fade" th:id="'task' + ${task.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${task.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${task.id}" th:text="${task.title}"></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Описание</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.description}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Проект</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.project.title}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Дедлайн</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.getDeadline()}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form th:action="@{/task/{id}/{action}(id=${task.getId()}, action='start')}">
+                                                <button type="submit" class="btn btn-primary">Начать выполнение</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${waitExecuteTasks.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет активных задач</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Ожидают подтверждения</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${waitApproveTasks.size()!=0}">
+                        <th:block th:each="task : ${waitApproveTasks}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${task.title}">Project title</h5>
+                                    <div class="card-body">
+                                        <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                        <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                                            <p class="card-text font-weight-bold">Исполнитель: <span class="font-weight-normal" th:text="${task.executor.name}"></span></p>
+                                        </sec:authorize>
+                                        <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${task.project.title}"></span></p>
+                                        <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${task.getStart()}"></span></p>
+                                        <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${task.getDeadline()}"></span></p>
+
+                                        <!--a th:href="@{/task/{id}(id=${task.id})}" class="card-link stretched-link">К деталям</a-->
+                                        <!--a type="button" class="card-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">
+                                            Подробнее
+                                        </a-->
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Задачи в ожидании -->
+                            <div class="modal fade" th:id="'task' + ${task.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${task.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${task.id}" th:text="${task.title}"></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Описание</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.description}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Проект</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.project.title}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Дедлайн</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task.getDeadline()}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Отчет</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${task?.taskReport.report}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                                            <div class="modal-footer">
+                                                <form th:action="@{/task/{id}/{action}(id=${task.getId()}, action='approve')}">
+                                                    <button type="submit" class="btn btn-primary">Подтвердить выполнение</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${waitApproveTasks.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет задач, ожидающих подтверждения</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

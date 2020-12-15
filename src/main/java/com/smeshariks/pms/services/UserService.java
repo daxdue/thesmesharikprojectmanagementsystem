@@ -104,4 +104,8 @@ public class UserService implements UserDetailsService {
     public List<User> findUsersByRole(Role role) {
         return userRepository.findUsersByRole(role);
     }
+
+    public List<User> findAllByRoleName(String name) {
+        return userRepository.findAllByRoleName(name);
+    }
 }

@@ -1,17 +1,40 @@
 package com.smeshariks.pms.entities;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
+@Data
+@NoArgsConstructor
 public class ChatMessage {
-    @Id
-    private String id;
-    private String chatId;
-    private String senderId;
-    private String recipientId;
-    private String senderName;
-    private String recipientName;
+    private MessageType type;
     private String content;
-    private Date timestamp;
-    private MessageStatus status;
+    private String sender;
+    public enum MessageType {
+        CHAT,
+        JOIN,
+        LEAVE
+    }
+    public MessageType getType() {
+        return type;
+    }
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+    public String getContent() {
+        return content;
+    }
+    public void setContent(String content) {
+        this.content = content;
+    }
+    public String getSender() {
+        return sender;
+    }
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 }

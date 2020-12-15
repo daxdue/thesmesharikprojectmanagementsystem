@@ -120,10 +120,10 @@
                                     <span class="badge badge-pill badge-success">Задачи</span>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:text="${tasks.size()}"></span></h6>
-                                    <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                    <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
-                                    <a th:href="@{/tasks}" class="card-link stretched-link">Подробнее</a>
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeTasks}"></span></h6>
+                                    <p class="card-text">Ожидают выполнения: <span th:utext="${waitingTasks}"></span></p>
+                                    <p class="card-text">На подтверждении: <span th:utext="${waitingApprove }"></span></p>
+                                    <a th:href="@{/task}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>
@@ -134,9 +134,9 @@
                                     <span class="badge badge-pill badge-info">Команда</span>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-3 text">Сотрудников: </h6>
-                                    <p class="card-text">Ожидают: <!--span th:utext="${deviceQuantity    }"></span--></p>
-                                    <p class="card-text">Завершено: <!--span th:utext="${cluster.getClusterStatus().name}"></span--></p>
+                                    <h6 class="card-subtitle mb-3 text">Сотрудников: <span th:utext="${workersAmount}">0</span></h6>
+                                    <p class="card-text">Свободны: <span th:utext="${freeWorkers}">0</span></p>
+                                    <p class="card-text">Заняты: <span th:utext="${busyWorkers}">0</span></p>
                                     <a th:href="@{/team}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
@@ -180,10 +180,10 @@
                                     <span class="badge badge-pill badge-success">Задачи</span>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${tasks.size()}"></span></h6>
-                                    <p class="card-text">Ожидают: <span th:utext="${tasks.size()}"></span></p>
-                                    <p class="card-text">Завершено: <span th:utext="${tasks.size()}"></span></p>
-                                    <a th:href="@{/project/get(type='active')}" class="card-link stretched-link">Подробнее</a>
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeTasks}"></span></h6>
+                                    <p class="card-text">Ожидают выполнения: <span th:utext="${waitingTasks}"></span></p>
+                                    <p class="card-text">На подтверждении: <span th:utext="${waitingApprove}"></span></p>
+                                    <a th:href="@{/task}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>
