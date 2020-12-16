@@ -99,6 +99,10 @@ public class MainController {
                             break;
                     }
                 }
+
+                model.addAttribute("activeTasks", activaTasks);
+                model.addAttribute("waitingTasks", waitingTasks);
+                model.addAttribute("waitingApprove", waitingApprove);
             }
 
             List<User> allWorkersAmount = userService.findAllByRoleName(UserRole.WORKER.getDatabaseRole());
@@ -135,6 +139,13 @@ public class MainController {
             model.addAttribute("notApprovedProjects", notApproved);
             model.addAttribute("completedProjects", completed);
 
+
+        } else if(user.getUserRole() == UserRole.WAREHOUSEMAN){
+
+            //Заявки
+
+            //Остатки по складу
+
         } else {
             allProjects = projectService.findByUser(user);
             allTasks = taskService.findTasksByExecutor(user);
@@ -159,13 +170,14 @@ public class MainController {
                     }
                 }
             }
-
+            model.addAttribute("activeTasks", activaTasks);
+            model.addAttribute("waitingTasks", waitingTasks);
+            model.addAttribute("waitingApprove", waitingApprove);
+            model.addAttribute("tasks", allTasks);
         }
-        model.addAttribute("activeTasks", activaTasks);
-        model.addAttribute("waitingTasks", waitingTasks);
-        model.addAttribute("waitingApprove", waitingApprove);
+
         model.addAttribute("user", user);
-        model.addAttribute("tasks", allTasks);
+
 
         return "main";
     }

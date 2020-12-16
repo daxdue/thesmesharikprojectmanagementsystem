@@ -1,11 +1,9 @@
 package com.smeshariks.pms.controllers;
 
+import com.smeshariks.pms.dto.MaterialRequestDto;
 import com.smeshariks.pms.dto.SmesharikDto;
 import com.smeshariks.pms.entities.*;
-import com.smeshariks.pms.services.ProjectService;
-import com.smeshariks.pms.services.TaskService;
-import com.smeshariks.pms.services.TaskStatusService;
-import com.smeshariks.pms.services.UserService;
+import com.smeshariks.pms.services.*;
 import com.smeshariks.pms.utils.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,14 +26,17 @@ public class TaskController {
     private TaskService taskService;
     private TaskStatusService taskStatusService;
     private UserService userService;
+    private final MaterialService materialService;
 
     @Autowired
     public TaskController(ProjectService projectService, TaskService taskService,
-                          UserService userService, TaskStatusService taskStatusService) {
+                          UserService userService, TaskStatusService taskStatusService,
+                          MaterialService materialService) {
         this.projectService = projectService;
         this.taskService = taskService;
         this.userService = userService;
         this.taskStatusService = taskStatusService;
+        this.materialService = materialService;
     }
 
 
@@ -160,6 +161,7 @@ public class TaskController {
         List<Task> waitExecuteTasks = new ArrayList<>();
         List<Task> waitApproveTasks = new ArrayList<>();
         List<Task> allTasks = new ArrayList<>();
+        List<Material> materials = materialService.findAllMaterials();
 
         if(smesharikDto.getUserRole() == UserRole.ADMIN) {
 
@@ -196,6 +198,8 @@ public class TaskController {
         model.addAttribute("workflowTasks", inWorkTasks);
         model.addAttribute("waitApproveTasks", waitApproveTasks);
         model.addAttribute("waitExecuteTasks", waitExecuteTasks);
+        model.addAttribute("materials", materials);
+        model.addAttribute("newRequest", new MaterialRequestDto());
         model.addAttribute("taskReport", new TaskReport());
 
         return "tasks";

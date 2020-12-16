@@ -169,9 +169,66 @@
                                                             <textarea class="form-control" id="desc" placeholder="Напишите отчет" th:field="*{report}" rows="3" required></textarea>
                                                             <input type="hidden" th:value="${task.id}" th:attr="name='task_id'">
                                                         </div>
+                                                        <div class="form-group col-md-12 md-3">
+                                                            <button type="submit" class="btn btn-primary">Завершить</button>
+                                                        </div>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary">Завершить</button>
+
                                                 </form>
+
+                                                <div class="row mb-2">
+                                                    <div class="form-group col-md-12 md-3">
+                                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                                                            Заявка на склад
+                                                        </button>
+                                                    </div>
+                                                    <div class="form-group col-md-12 md-3">
+                                                        <div class="collapse" id="collapseExample">
+                                                            <div class="card card-body">
+                                                                <form th:action="@{/warehouse/request}" th:object="${newRequest}" method="post">
+                                                                    <div class="row mb-1">
+                                                                        <div class="form-group col-md-12 md-3">
+                                                                            <label for="material">Материал/оборудование</label>
+                                                                            <select class="custom-select form-control" id="material" th:field="*{material_id}" required>
+                                                                                <!--option th:value="0" selected>Выберите материал/оборудование</option-->
+                                                                                <option th:each="material : ${materials}" th:value="${material.id}" th:text="${material.title}"></option>
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-1">
+                                                                        <div class="form-group col-md-6 md-3">
+                                                                            <label for="material">Количество</label>
+                                                                            <input type="number" min="1" class="form-control" id="material" placeholder="Введите количество" th:field="*{quantity}"  required>
+                                                                        </div>
+                                                                        <div class="form-group col-md-6 md-3">
+                                                                            <label for="dead">Срок</label>
+                                                                            <input type="text" class="form-control" id="dead" placeholder="дд.мм.гггг" th:field="*{deadline}"  required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row mb-1">
+                                                                        <div class="form-group col-md-12 md-3">
+                                                                            <label for="addinfo">Дополнительная информация</label>
+                                                                            <input type="text" class="form-control" id="addinfo" placeholder="Дополнительная информация" th:field="*{moreinfo}"  required>
+                                                                        </div>
+                                                                    </div>
+                                                                    <input type="hidden" th:value="${task.project.id}" th:attr="name='project_id'">
+                                                                    <input type="hidden" th:value="${task.executor.id}" th:attr="name='user_id'">
+                                                                    <div class="row mb-1">
+                                                                        <div class="form-group col-md-12 md-3">
+                                                                            <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!--form th:action="@{/task/{id}/{action}(id=${task.getId()}, action='approve')}">
+                                                        <div class="form-group col-md-12 md-1">
+                                                            <button type="submit" class="btn btn-primary">Заявка на склад</button>
+                                                        </div>
+                                                    </form-->
+                                                </div>
                                             </div>
 
                                         </div>
