@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Заявки | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Активные заявки</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${materialsRequestsActive.size()!=0}">
+                        <th:block th:each="request : ${materialsRequestsActive}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${request.material.title}">Project title</h5>
+                                    <div class="card-body">
+                                        <p class="card-text font-weight-bold">Количество: <span class="font-weight-normal" th:text="${request.quantity}"></span></p>
+                                        <p class="card-text font-weight-bold">Работник: <span class="font-weight-normal" th:text="${request.user.name}"></span></p>
+                                        <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${request.project.title}"></span></p>
+                                        <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${request.getDead()}"></span></p>
+
+                                        <!--a th:href="@{/task/{id}(id=${task.id})}" class="card-link stretched-link">К деталям</a-->
+                                        <!--a type="button" class="card-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#task' + ${task.id}">
+                                            Подробнее
+                                        </a-->
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#request' + ${request.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- Выполняемые -->
+                            <div class="modal fade" th:id="'request' + ${request.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${request.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${request.id}" th:text="${request.material}"></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                        </div>
+                                        <!--div class="modal-footer">
+
+                                        </div-->
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${materialsRequestsActive.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет активных заявок</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Ожидают выполнения</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${materialsRequestsWaits.size()!=0}">
+                        <th:block th:each="request : ${materialsRequestsWaits}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${request.material.title}">Project title</h5>
+                                    <div class="card-body">
+                                        <p class="card-text font-weight-bold">Количество: <span class="font-weight-normal" th:text="${request.quantity}"></span></p>
+                                        <p class="card-text font-weight-bold">Работник: <span class="font-weight-normal" th:text="${request.user.name}"></span></p>
+                                        <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${request.project.title}"></span></p>
+                                        <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${request.getDead()}"></span></p>
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#request' + ${request.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+                            <!-- Ожидающие -->
+                            <div class="modal fade" th:id="'request' + ${request.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${request.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${request.id}" th:text="${request.material.title}"></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Материал</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.material.title}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Количество</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.quantity}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Заказчик</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.user.name}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Проект</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.project.title}"></p>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Крайний срок</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.getDead()}"></p>
+                                                </div>
+                                            </div>
+                                            <hr class="my-4">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Доступно на складе</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${request.material.balance}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form th:action="@{/warehouse/requests/{id}/{action}(id=${request.id}, action='start')}">
+                                                <th:block th:if="${request.quantity < request.material.balance}">
+                                                    <button type="submit" class="btn btn-primary">Начать выполнение</button>
+                                                </th:block>
+                                                <th:block th:unless="${request.quantity < request.material.balance}">
+                                                    <button type="submit" class="btn btn-primary" disabled>Начать выполнение</button>
+                                                </th:block>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${materialsRequestsWaits.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет ожидающих выполнения заявок</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

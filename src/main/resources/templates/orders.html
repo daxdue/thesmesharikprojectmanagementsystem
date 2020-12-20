@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Поставки | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Активные заказы</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <th:block th:if="${ordersActive.size()!=0}">
+                        <th:block th:each="order : ${ordersActive}">
+                            <div class="col-md-4">
+                                <div class="card shadow p-3 mb-5 bg-white">
+                                    <h5 class="card-header text-primary" th:text="${order.id}">Project title</h5>
+                                    <div class="card-body">
+                                        <p class="card-text font-weight-bold">Количество позиций: <span class="font-weight-normal" th:text="${order.materialOrders.size()}"></span></p>
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#request' + ${order.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </th:block>
+                    </th:block>
+
+                    <th:block th:if="${ordersActive.size() == 0}">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                            <h6 class="my-0 font-weight-light text-secondary">Нет активных заказов</h6>
+                        </div>
+                    </th:block>
+
+                </div>
+            </div>
+
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Необходимо заказать</h5>
+            </div>
+
+            <form th:action="@{/warehouse/shipments}" th:object="${orderList}" method="post">
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th scope="col">Наименование</th>
+                        <th scope="col">Остаток на складе</th>
+                        <th scope="col">Минимально необходимое кол-во</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <th:block th:if="${needOrder ne null}">
+                        <th:block th:each="material, stat : ${needOrder}">
+                            <tr>
+                                <td th:text="${material.material.title}"></td>
+                                <td th:text="${material.material.balance}"></td>
+                                <td><input type="number" th:value="${material.quantity}" th:field="*{quantity[__${stat.index}__]}"></td>
+
+                                <input type="hidden" th:value="${material.id}" th:field="*{id[__${stat.index}__]}">
+                            </tr>
+                        </th:block>
+                    </th:block>
+
+                    </tbody>
+                </table>
+
+                <div class="form-group col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        Заказать
+                    </button>
+                </div>
+            </form>
+
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

@@ -52,7 +52,7 @@ public class MaterialsCalculator {
                             MaterialOrder materialOrder = new MaterialOrder();
                             materialOrder.setMaterial(material);
                             materialOrder.setQuantity(material.getMinimumVolume() + materialRequest.getQuantity());
-                            materialOrder.setAdded(new Timestamp(new Date().getTime()));
+                            //materialOrder.setAdded(new Timestamp(new Date().getTime()));
                             needsOrderPositions.add(materialOrder);
                             found = true;
                         }
@@ -61,12 +61,12 @@ public class MaterialsCalculator {
 
                 if(!found) {
                     //Материала нет в списке запросов. Проверяем наличие
-                    if(material.getBalance() < material.getMinimumVolume()) {
+                    if(material.getBalance() <= material.getMinimumVolume()) {
                         //Кол-во на складе меньше неснижаемого остатка. Необходимо дозаказать
                         MaterialOrder materialOrder = new MaterialOrder();
                         materialOrder.setMaterial(material);
                         materialOrder.setQuantity(material.getMinimumVolume() + material.getBalance());
-                        materialOrder.setAdded(new Timestamp(new Date().getTime()));
+                        //materialOrder.setAdded(new Timestamp(new Date().getTime()));
                         needsOrderPositions.add(materialOrder);
                     }
                 }

@@ -29,6 +29,9 @@ public class MaterialRequestServiceImpl implements MaterialRequestService {
         return true;
     }
 
+    public void updateMaterialRequest(MaterialRequest materialRequest) {
+        materialRequestRepository.edit(materialRequest.getStatus(), materialRequest.getId());
+    }
     public void deleteMaterialRequest(Integer id) {
         materialRequestRepository.deleteById(id);
     }

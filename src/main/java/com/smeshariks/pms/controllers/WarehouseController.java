@@ -1,27 +1,21 @@
 package com.smeshariks.pms.controllers;
 
-import com.smeshariks.pms.dto.MaterialDto;
-import com.smeshariks.pms.dto.MaterialEdit;
-import com.smeshariks.pms.dto.MaterialRequestDto;
-import com.smeshariks.pms.dto.SmesharikDto;
+import com.smeshariks.pms.dto.*;
 import com.smeshariks.pms.entities.*;
-import com.smeshariks.pms.services.MaterialRequestService;
-import com.smeshariks.pms.services.MaterialService;
-import com.smeshariks.pms.services.ProjectService;
-import com.smeshariks.pms.services.UserService;
+import com.smeshariks.pms.services.*;
 import com.smeshariks.pms.utils.DateValidator;
 import com.smeshariks.pms.utils.MaterialReserveCalculator;
+import com.smeshariks.pms.utils.MaterialsCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -33,14 +27,16 @@ public class WarehouseController {
     private final ProjectService projectService;
     private final MaterialService materialService;
     private final MaterialRequestService materialRequestService;
+    private final OrderService orderService;
 
     @Autowired
     public WarehouseController(MaterialService materialService, MaterialRequestService materialRequestService,
-                               UserService userService, ProjectService projectService) {
+                               UserService userService, ProjectService projectService, OrderService orderService) {
         this.materialService = materialService;
         this.materialRequestService = materialRequestService;
         this.userService = userService;
         this.projectService = projectService;
+        this.orderService = orderService;
     }
 
     @PostMapping("/request")
@@ -116,6 +112,77 @@ public class WarehouseController {
         model.addAttribute("materialEdit", new MaterialEdit());
         model.addAttribute("newMaterial", new MaterialDto());
         return "materials";
+    }
+
+    @GetMapping("/requests")
+    public String materialRequests(Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+
+        List<MaterialRequest> materialRequestsActive = materialRequestService.findRequestsByStatus(RequestStatus.IN_PROCESS);
+        List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+
+        model.addAttribute("user", smesharikDto);
+        model.addAttribute("materialsRequestsActive", materialRequestsActive);
+        model.addAttribute("materialsRequestsWaits", materialRequestsWaits);
+
+        return "requests";
+    }
+
+    @GetMapping("/requests/{id}/{action}")
+    public String updateRequest(@PathVariable Integer id, @PathVariable String action, Model model) {
+        MaterialRequest materialRequest = materialRequestService.findRequest(id);
+        if(materialRequest != null) {
+            switch (action) {
+                case "start":
+                    materialRequest.setStatus(RequestStatus.IN_PROCESS.getValue());
+                    break;
+
+                case "complete":
+                    materialRequest.setStatus(RequestStatus.COMPLETED.getValue());
+                    break;
+            }
+
+            materialRequestService.updateMaterialRequest(materialRequest);
+        }
+
+        return "redirect:/warehouse/requests";
+    }
+
+    @GetMapping("/shipments")
+    public String materialOrders(Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+
+        List<Order> ordersActive = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
+
+        List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+        List<Material> materials = materialService.findAllMaterials();
+        MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits);
+        materialsCalculator.calculate();
+
+        model.addAttribute("needOrder", materialsCalculator.getNeedsOrderPositions());
+        model.addAttribute("orderList", new OrdersDto());
+        model.addAttribute("user", smesharikDto);
+        model.addAttribute("ordersActive", ordersActive);
+
+        return "orders";
+    }
+
+    @PostMapping("/shipments")
+    public String orderMaterials(@ModelAttribute("needOrder") List<MaterialOrder> needsOrder) {
+        List<MaterialOrder> materialOrders = new ArrayList<>();
+        System.out.println(needsOrder.size());
+
+        return "redirect:/warehouse/shipments";
     }
 
     @PostMapping("/materials/change")

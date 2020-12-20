@@ -206,7 +206,7 @@
                                     <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeRequests}"></span></h6>
                                     <p class="card-text">Ожидают выполнения: <span th:utext="${waitRequests}"></span></p>
                                     <!--p class="card-text">На подтверждении: <span th:utext="${waitingApprove }"></span></p-->
-                                    <a th:href="@{/task}" class="card-link stretched-link">Подробнее</a>
+                                    <a th:href="@{/warehouse/requests}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>
@@ -220,6 +220,19 @@
                                     <h6 class="card-subtitle mb-3 text">Всего позиций: <span th:utext="${positions}">0</span></h6>
                                     <p class="card-text">Необходимо заказать: <span th:utext="${needOrder}">0</span></p>
                                     <a th:href="@{/warehouse}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-info">Поставки</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">Всего позиций: <span th:utext="${positions}">0</span></h6>
+                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder}">0</span></p>
+                                    <a th:href="@{/warehouse/shipments}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>

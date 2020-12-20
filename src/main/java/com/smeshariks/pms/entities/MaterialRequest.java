@@ -1,6 +1,7 @@
 package com.smeshariks.pms.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.smeshariks.pms.utils.TimestampConverter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -58,4 +59,8 @@ public class MaterialRequest {
      * Статус выполнения
      */
     private Integer status;
+
+    public String getDead() {
+        return TimestampConverter.convert(deadline, false);
+    }
 }
