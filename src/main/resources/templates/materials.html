@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Склад | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-2">
+                <h5 class="my-0 font-weight-normal text-primary">Позиции на складе</h5>
+            </div>
+
+            <div class="container">
+
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-1">
+                        <h5 class="my-0 font-weight-normal text-primary">Кол-во позиций: <span th:text="${materials.size()}"></span></h5>
+                        <!--button class="btn"><i class="fa fa-plus"></i></button-->
+
+                        <button type="button" class="btn" data-toggle="modal" data-target="#addMaterial">
+                            <i class="fa fa-plus"></i>
+                        </button>
+
+                        <div class="modal fade" id="addMaterial" tabindex="-1" aria-labelledby="addMaterialLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addMaterialLabel">Добавление материала</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form th:action="@{/warehouse/materials}" th:object="${newMaterial}" method="post">
+
+                                            <div class="row mb-1">
+                                                <div class="form-group col-md-12 md-3">
+                                                    <label for="name">Наименование</label>
+                                                    <input type="text" class="form-control" id="name" placeholder="Введите наименование" th:field="*{title}" required>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="form-group col-md-12 md-3">
+                                                    <label for="desc">Описание</label>
+                                                    <textarea class="form-control" id="desc" placeholder="Введите описание" th:field="*{description}" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="form-group col-md-6 md-3">
+                                                    <label for="start">В наличии</label>
+                                                    <input type="number" min="0" class="form-control" id="start" placeholder="Введите наличие материала" th:field="*{balance}"  required>
+                                                </div>
+                                                <div class="form-group col-md-6 md-3">
+                                                    <label for="executor">Неснижаемый остаток</label>
+                                                    <input type="number" min="0" class="form-control" id="executor" placeholder="Введите неснижаемый остаток" th:field="*{minimumVolume}"  required>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1">
+                                                <div class="form-group col-md-12 md-3">
+                                                    <label for="qCost">Стоимость</label>
+                                                    <input type="number" min="0" class="form-control" id="qCost" placeholder="Введите стоимость единицы" th:field="*{cost}"  required>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1">
+                                                <div class="form-group col-md-6 md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" th:attr="name='isEquipment'" id="exampleRadios1" th:value="0" checked>
+                                                        <label class="form-check-label" for="exampleRadios1">
+                                                            Материал
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-6 md-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" th:attr="name='isEquipment'" id="exampleRadios2" th:value="1">
+                                                        <label class="form-check-label" for="exampleRadios2">
+                                                            Оборудование
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="col-md-12 md-3">
+                                                    <button class="btn btn-primary  btn-block" type="submit">Создать</button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col" width="20%">Название</th>
+                            <th scope="col">Описание</th>
+                            <th scope="col">Остаток на складе</th>
+                            <th scope="col">Минимальный остаток</th>
+                            <th scope="col" width="15%">Резерв</th>
+                            <th scope="col">Дата обновления</th>
+                            <th scope="col" width="3%"></th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <th:block th:if="${materials ne null}">
+                            <th:block th:each="material : ${materials}">
+                                <th:block th:if="${material.balance <= material.minimumVolume and material.reserve <= material.balance}">
+                                    <tr class="table-warning">
+                                        <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#material' + ${material.id}" th:text="${material.title}">...</button></td>
+                                        <!--td th:text="${material.title}">...</td-->
+                                        <td th:text="${material.description}"></td>
+                                        <td th:text="${material.balance}"></td>
+                                        <td th:text="${material.minimumVolume}"></td>
+                                        <td th:text="${material.reserve}"></td>
+                                        <td th:text="${material.getDelivery()}"></td>
+                                        <td th:if="${material.isEquipment == 1}">
+                                            <i class="fa fa-tools"></i>
+                                        </td>
+                                        <td th:unless="${material.isEquipment == 1}">
+                                        </td>
+
+                                        <div class="modal fade" th:id="'material' + ${material.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${material.id}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:id="'taskLabel' + ${material.id}" th:text="${material.title}"></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Описание</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.description}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Остаток на складе</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.balance}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Неснижаемый остаток</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.minimumVolume}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Стоимость единицы</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.cost} + ' ₡'"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Дата крайней поставки</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.getDelivery()}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-4">
+                                                        <div class="row mb-2">
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/request}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialDecrease">Списать</label>
+                                                                        <input type="number" min="1" th:attr="max=${material.balance - material.minimumVolume}" class="form-control" id="materialDecrease" placeholder="Введите количество" th:field="*{quantity}"  disabled>
+
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Списать
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/materials/change}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialIncrease">Внести</label>
+                                                                        <input type="number" min="1" class="form-control" id="materialIncrease" placeholder="Введите количество" th:field="*{quantity}"  required>
+                                                                        <input type="hidden" th:value="${material.id}" th:attr="name='id'">
+                                                                        <input type="hidden" th:value="1" th:attr="name='type'">
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Внести
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                </th:block>
+                                <th:block th:if="${material.balance > material.minimumVolume and material.reserve < material.balance}">
+                                    <tr>
+                                        <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#material' + ${material.id}" th:text="${material.title}">...</button></td>
+                                        <!--td th:text="${material.title}">...</td-->
+                                        <td th:text="${material.description}"></td>
+                                        <td th:text="${material.balance}"></td>
+                                        <td th:text="${material.minimumVolume}"></td>
+                                        <td th:text="${material.reserve}"></td>
+                                        <td th:text="${material.getDelivery()}"></td>
+                                        <td th:if="${material.isEquipment == 1}">
+                                            <i class="fa fa-tools"></i>
+                                        </td>
+                                        <td th:unless="${material.isEquipment == 1}">
+
+                                        </td>
+
+
+                                        <div class="modal fade" th:id="'material' + ${material.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${material.id}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:id="'taskLabel' + ${material.id}" th:text="${material.title}"></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Описание</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.description}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Остаток на складе</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.balance}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Неснижаемый остаток</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.minimumVolume}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Стоимость единицы</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.cost} + ' ₡'"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Дата обновления</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.getDelivery()}"></p>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row mb-2">
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/materials/change}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialDecrease">Списать</label>
+                                                                        <input type="number" min="1" th:attr="max=${material.balance - material.minimumVolume}" class="form-control" id="materialDecrease" placeholder="Введите количество" th:field="*{quantity}" required>
+                                                                        <input type="hidden" th:value="${material.id}" th:attr="name='id'">
+                                                                        <input type="hidden" th:value="0" th:attr="name='type'">
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Списать
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/materials/change}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialIncrease">Внести</label>
+                                                                        <input type="number" min="1" class="form-control" id="materialIncrease" placeholder="Введите количество" th:field="*{quantity}"  required>
+                                                                        <input type="hidden" th:value="${material.id}" th:attr="name='id'">
+                                                                        <input type="hidden" th:value="1" th:attr="name='type'">
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Внести
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                </th:block>
+
+                                <th:block th:if="${material.balance < material.reserve}">
+                                    <tr class="table-danger">
+                                        <td><button type="button" class="btn btn-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#material' + ${material.id}" th:text="${material.title}">...</button></td>
+                                        <!--td th:text="${material.title}">...</td-->
+                                        <td th:text="${material.description}"></td>
+                                        <td th:text="${material.balance}"></td>
+                                        <td th:text="${material.minimumVolume}"></td>
+                                        <td th:text="${material.reserve}"></td>
+                                        <td th:text="${material.getDelivery()}"></td>
+                                        <td th:if="${material.isEquipment == 1}">
+                                            <i class="fa fa-tools"></i>
+                                        </td>
+                                        <td th:unless="${material.isEquipment == 1}">
+                                        </td>
+
+                                        <div class="modal fade" th:id="'material' + ${material.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${material.id}" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" th:id="'taskLabel' + ${material.id}" th:text="${material.title}"></h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Описание</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.description}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Остаток на складе</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.balance}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Неснижаемый остаток</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.minimumVolume}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Стоимость единицы</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.cost} + ' ₡'"></p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold">Дата крайней поставки</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${material.getDelivery()}"></p>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="my-4">
+                                                        <div class="row mb-2">
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/materials/change}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialDecrease">Списать</label>
+                                                                        <input type="number" min="1" th:attr="max=${material.balance - material.minimumVolume}" class="form-control" id="materialDecrease" placeholder="Введите количество" th:field="*{quantity}"  disabled>
+
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Списать
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="form-group col-md-6 md-3">
+                                                                <form th:action="@{/warehouse/materials/change}" th:object="${materialEdit}" method="post">
+                                                                    <div class="form-group col-md-12 mb-2">
+                                                                        <label for="materialIncrease">Внести</label>
+                                                                        <input type="number" min="1" class="form-control" id="materialIncrease" placeholder="Введите количество" th:field="*{quantity}"  required>
+                                                                        <input type="hidden" th:value="${material.id}" th:attr="name='id'">
+                                                                        <input type="hidden" th:value="1" th:attr="name='type'">
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <button type="submit" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Остаток меньше минимального">
+                                                                            Внести
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                </th:block>
+
+
+
+                            </th:block>
+                        </th:block>
+                        </tbody>
+                    </table>
+
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-1">
+                    <p class="button"><i class="fa fa-plus"></i></p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>
