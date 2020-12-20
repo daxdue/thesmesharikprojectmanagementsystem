@@ -1,9 +1,6 @@
 package com.smeshariks.pms.services;
 
-import com.smeshariks.pms.entities.Material;
-import com.smeshariks.pms.entities.MaterialRequest;
-import com.smeshariks.pms.entities.Project;
-import com.smeshariks.pms.entities.User;
+import com.smeshariks.pms.entities.*;
 
 import java.util.List;
 
@@ -17,4 +14,6 @@ public interface MaterialRequestService {
     List<MaterialRequest> findRequestsByProject(Project project);
     List<MaterialRequest> findRequestsByUser(User user);
     List<MaterialRequest> findRequestsByMaterial(Material material);
+    List<MaterialRequest> findRequestsByStatus(RequestStatus requestStatus);
+    List<MaterialRequest> findRequestsByStatusAndMaterial(RequestStatus requestStatus, Material material);
 }

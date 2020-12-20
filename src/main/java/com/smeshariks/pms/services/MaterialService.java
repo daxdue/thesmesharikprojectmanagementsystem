@@ -11,7 +11,9 @@ public interface MaterialService {
     boolean saveMaterial(Material material);
     void updateMaterial(Material material);
     void deleteMaterial(Integer id);
+    long count();
     List<Material> findAllMaterials();
+    List<Material> findAllMaterialsWithReserve();
     List<Material> findAllEquipments();
     List<Material> findOnlyMaterials();
 }

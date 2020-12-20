@@ -1,13 +1,11 @@
 package com.smeshariks.pms.services;
 
-import com.smeshariks.pms.entities.Material;
-import com.smeshariks.pms.entities.MaterialRequest;
-import com.smeshariks.pms.entities.Project;
-import com.smeshariks.pms.entities.User;
+import com.smeshariks.pms.entities.*;
 import com.smeshariks.pms.repositories.MaterialRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +47,35 @@ public class MaterialRequestServiceImpl implements MaterialRequestService {
 
     public List<MaterialRequest> findRequestsByMaterial(Material material) {
         return materialRequestRepository.findMaterialRequestByMaterial(material);
+    }
+
+
+    public List<MaterialRequest> findRequestsByStatus(RequestStatus requestStatus) {
+        List<MaterialRequest> materialRequests = new ArrayList<>();
+        switch (requestStatus) {
+            case REQUESTED:
+                materialRequests =  materialRequestRepository.findMaterialRequestByStatus(RequestStatus.REQUESTED.getValue());
+                break;
+
+            case IN_PROCESS:
+                materialRequests =  materialRequestRepository.findMaterialRequestByStatus(RequestStatus.IN_PROCESS.getValue());
+                break;
+
+            case COMPLETED:
+                materialRequests =  materialRequestRepository.findMaterialRequestByStatus(RequestStatus.COMPLETED.getValue());
+                break;
+        }
+        return materialRequests;
+    }
+
+    public List<MaterialRequest> findRequestsByStatusAndMaterial(RequestStatus requestStatus, Material material) {
+       List<MaterialRequest> materialRequests = new ArrayList<>();
+       switch (requestStatus) {
+           case REQUESTED:
+               materialRequests = materialRequestRepository.findMaterialRequestByStatusAndMaterial(RequestStatus.REQUESTED.getValue(), material);
+               break;
+       }
+
+       return materialRequests;
     }
 }

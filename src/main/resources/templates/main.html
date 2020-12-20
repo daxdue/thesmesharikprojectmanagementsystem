@@ -191,6 +191,42 @@
                 </div>
             </div>
 
+            <div sec:authorize="hasRole('ROLE_WAREHOUSEMAN')">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Управление складом</h5>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-primary">Заявки</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">В работе: <span th:utext="${activeRequests}"></span></h6>
+                                    <p class="card-text">Ожидают выполнения: <span th:utext="${waitRequests}"></span></p>
+                                    <!--p class="card-text">На подтверждении: <span th:utext="${waitingApprove }"></span></p-->
+                                    <a th:href="@{/task}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-success">Наличие</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">Всего позиций: <span th:utext="${positions}">0</span></h6>
+                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder}">0</span></p>
+                                    <a th:href="@{/warehouse}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 </div>

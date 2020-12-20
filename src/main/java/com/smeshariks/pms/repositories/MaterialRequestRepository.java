@@ -15,4 +15,6 @@ public interface MaterialRequestRepository extends JpaRepository<MaterialRequest
     List<MaterialRequest> findMaterialRequestByProject(Project project);
     List<MaterialRequest> findMaterialRequestByUser(User user);
     List<MaterialRequest> findMaterialRequestByMaterial(Material material);
+    List<MaterialRequest> findMaterialRequestByStatus(Integer status);
+    List<MaterialRequest> findMaterialRequestByStatusAndMaterial(Integer status, Material material);
 }

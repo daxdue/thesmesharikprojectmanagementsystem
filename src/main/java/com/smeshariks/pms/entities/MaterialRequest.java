@@ -53,4 +53,9 @@ public class MaterialRequest {
      * Время, которому требуется
      */
     private Timestamp deadline;
+
+    /**
+     * Статус выполнения
+     */
+    private Integer status;
 }

@@ -1,6 +1,8 @@
 package com.smeshariks.pms.services;
 
 import com.smeshariks.pms.entities.Material;
+import com.smeshariks.pms.entities.MaterialRequest;
+import com.smeshariks.pms.entities.RequestStatus;
 import com.smeshariks.pms.repositories.MaterialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,12 @@ import java.util.Optional;
 public class MaterialServiceImpl implements MaterialService{
 
     private final MaterialRepository materialRepository;
+    private final MaterialRequestService materialRequestService;
 
     @Autowired
-    public MaterialServiceImpl(MaterialRepository materialRepository) {
+    public MaterialServiceImpl(MaterialRepository materialRepository, MaterialRequestService materialRequestService) {
         this.materialRepository = materialRepository;
+        this.materialRequestService = materialRequestService;
     }
 
     public Material findMaterial(Integer id) {
@@ -47,12 +51,29 @@ public class MaterialServiceImpl implements MaterialService{
         }
     }
 
+    public long count() {
+        return materialRepository.count();
+    }
+
     public void deleteMaterial(Integer id) {
         materialRepository.deleteById(id);
     }
 
     public List<Material> findAllMaterials() {
         return (List<Material>) materialRepository.findAll();
+    }
+
+    public List<Material> findAllMaterialsWithReserve() {
+        List<Material> materials = materialRepository.findAll();
+        for(Material material : materials) {
+            List<MaterialRequest> materialRequests = materialRequestService.findRequestsByStatusAndMaterial(RequestStatus.REQUESTED, material);
+            int reserve = 0;
+            for(MaterialRequest materialRequest : materialRequests) {
+                reserve += materialRequest.getQuantity();
+            }
+            material.setReserve(reserve);
+        }
+        return materials;
     }
 
     public List<Material> findAllEquipments() {

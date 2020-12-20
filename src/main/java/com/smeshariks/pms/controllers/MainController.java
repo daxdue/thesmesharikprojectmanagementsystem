@@ -1,9 +1,8 @@
 package com.smeshariks.pms.controllers;
 
 import com.smeshariks.pms.entities.*;
-import com.smeshariks.pms.services.ProjectService;
-import com.smeshariks.pms.services.TaskService;
-import com.smeshariks.pms.services.UserService;
+import com.smeshariks.pms.services.*;
+import com.smeshariks.pms.utils.MaterialsCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -21,12 +20,17 @@ public class MainController {
     private ProjectService projectService;
     private TaskService taskService;
     private UserService userService;
+    private final MaterialService materialService;
+    private final MaterialRequestService materialRequestService;
 
     @Autowired
-    public MainController(ProjectService projectService, TaskService taskService, UserService userService) {
+    public MainController(ProjectService projectService, TaskService taskService, UserService userService,
+                          MaterialService materialService, MaterialRequestService materialRequestService) {
         this.projectService = projectService;
         this.taskService = taskService;
         this.userService = userService;
+        this.materialService = materialService;
+        this.materialRequestService = materialRequestService;
     }
 
     @GetMapping("/home")
@@ -143,8 +147,24 @@ public class MainController {
         } else if(user.getUserRole() == UserRole.WAREHOUSEMAN){
 
             //Заявки
+            List<MaterialRequest> materialRequestsActive = materialRequestService.findRequestsByStatus(RequestStatus.IN_PROCESS);
+            List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+
+            //Общее число существующих позиций
+            long positionQuantity = materialService.count();
+
+            //Расчет позиций, которые необходимо заказать
+            List<Material> materials = materialService.findAllMaterials();
+            MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits);
+            materialsCalculator.calculate();
+
+            model.addAttribute("needOrder", materialsCalculator.getNeedsOrderPositions().size());
+            model.addAttribute("positions", positionQuantity);
+            model.addAttribute("activeRequests", materialRequestsActive.size());
+            model.addAttribute("waitRequests", materialRequestsWaits.size());
 
             //Остатки по складу
+
 
         } else {
             allProjects = projectService.findByUser(user);
