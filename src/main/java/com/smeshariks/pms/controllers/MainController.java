@@ -22,15 +22,20 @@ public class MainController {
     private UserService userService;
     private final MaterialService materialService;
     private final MaterialRequestService materialRequestService;
+    private final MaterialOrderService materialOrderService;
+    private final OrderService orderService;
 
     @Autowired
     public MainController(ProjectService projectService, TaskService taskService, UserService userService,
-                          MaterialService materialService, MaterialRequestService materialRequestService) {
+                          MaterialService materialService, MaterialRequestService materialRequestService,
+                          MaterialOrderService materialOrderService, OrderService orderService) {
         this.projectService = projectService;
         this.taskService = taskService;
         this.userService = userService;
         this.materialService = materialService;
         this.materialRequestService = materialRequestService;
+        this.materialOrderService = materialOrderService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/home")
@@ -148,17 +153,28 @@ public class MainController {
 
             //Заявки
             List<MaterialRequest> materialRequestsActive = materialRequestService.findRequestsByStatus(RequestStatus.IN_PROCESS);
-            List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+            //  List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
 
             //Общее число существующих позиций
             long positionQuantity = materialService.count();
 
-            //Расчет позиций, которые необходимо заказать
+            //Запрошенные материалы
+            List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+            //Все материалы
             List<Material> materials = materialService.findAllMaterials();
-            MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits);
+            //Все заказы материалов
+            List<MaterialOrder> materialOrders = new ArrayList<>();
+            List<Order> orders = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
+            for(Order order : orders) {
+                for(MaterialOrder materialOrder : order.getMaterialOrders()) {
+                    materialOrders.add(materialOrder);
+                }
+            }
+            MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits, materialOrders);
             materialsCalculator.calculate();
 
-            model.addAttribute("needOrder", materialsCalculator.getNeedsOrderPositions().size());
+            model.addAttribute("needOrder", materialsCalculator.getOrder());
+            model.addAttribute("orders", orders.size());
             model.addAttribute("positions", positionQuantity);
             model.addAttribute("activeRequests", materialRequestsActive.size());
             model.addAttribute("waitRequests", materialRequestsWaits.size());

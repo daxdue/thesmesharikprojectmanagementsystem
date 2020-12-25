@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "requests")
+@Table(name = "requests", schema = "public")
 @Data
 @NoArgsConstructor
 public class MaterialRequest {

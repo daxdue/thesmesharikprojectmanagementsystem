@@ -1,20 +1,15 @@
 package com.smeshariks.pms.dto;
 
+import com.smeshariks.pms.entities.MaterialOrder;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.util.List;
+
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
 public class OrdersDto {
 
-    @Getter
-    @Setter
-    private ArrayList<Integer> id;
-    @Getter
-    @Setter
-    private ArrayList<Integer> quantity;
+    private List<MaterialOrder> materialOrders;
 }

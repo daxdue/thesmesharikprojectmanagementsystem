@@ -25,6 +25,15 @@ public class OrderServiceImpl implements OrderService {
         return order.orElse(new Order());
     }
 
+
+    public void updateOrder(Order order) {
+        Order orderDB = orderRepository.findById(order.getId()).get();
+        if(orderDB != null) {
+            orderDB.setStatus(order.getStatus());
+            orderRepository.edit(orderDB.getStatus(), orderDB.getId());
+        }
+    }
+
     public List<Order> findAllOrders() {
         return orderRepository.findAll();
     }

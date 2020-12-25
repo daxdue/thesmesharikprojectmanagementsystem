@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
-@Table(name = "materials")
+@Table(name = "materials", schema = "public")
 @Data
 @NoArgsConstructor
 public class Material {
@@ -32,6 +32,11 @@ public class Material {
      * Количество на складе
      */
     private Integer balance;
+
+    /**
+     * Заказано
+     */
+    private Integer ordered;
 
     /**
      * Стоимость единицы

@@ -59,7 +59,7 @@
                     </ul>
                 </div>
 
-                <div sec:authorize="hasRole('ROLE_ADMIN')">
+                <!--div sec:authorize="hasRole('ROLE_ADMIN')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
                             <a class="nav-link" href="#">
@@ -86,7 +86,7 @@
                             </a>
                         </li>
                     </ul>
-                </div>
+                </div-->
 
             </div>
         </nav>
@@ -137,7 +137,7 @@
                                     <h6 class="card-subtitle mb-3 text">Сотрудников: <span th:utext="${workersAmount}">0</span></h6>
                                     <p class="card-text">Свободны: <span th:utext="${freeWorkers}">0</span></p>
                                     <p class="card-text">Заняты: <span th:utext="${busyWorkers}">0</span></p>
-                                    <a th:href="@{/team}" class="card-link stretched-link">Подробнее</a>
+                                    <!--a th:href="@{/team}" class="card-link stretched-link">Подробнее</a-->
                                 </div>
                             </div>
                         </div>
@@ -218,7 +218,7 @@
                                 </div>
                                 <div class="card-body">
                                     <h6 class="card-subtitle mb-3 text">Всего позиций: <span th:utext="${positions}">0</span></h6>
-                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder}">0</span></p>
+                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder.materialOrders.size()}">0</span></p>
                                     <a th:href="@{/warehouse}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
@@ -230,8 +230,8 @@
                                     <span class="badge badge-pill badge-info">Поставки</span>
                                 </div>
                                 <div class="card-body">
-                                    <h6 class="card-subtitle mb-3 text">Всего позиций: <span th:utext="${positions}">0</span></h6>
-                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder}">0</span></p>
+                                    <h6 class="card-subtitle mb-3 text">Заказов: <span th:utext="${orders}">0</span></h6>
+                                    <p class="card-text">Необходимо заказать: <span th:utext="${needOrder.materialOrders.size()}">0</span></p>
                                     <a th:href="@{/warehouse/shipments}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>

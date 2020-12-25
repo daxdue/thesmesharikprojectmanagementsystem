@@ -7,7 +7,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "statuses")
+@Table(name = "statuses", schema = "public")
 @Data
 @NoArgsConstructor
 public class Status {

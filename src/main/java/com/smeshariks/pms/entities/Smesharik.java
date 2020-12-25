@@ -7,7 +7,7 @@ import org.hibernate.annotations.NaturalId;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "smeshariks")
+@Table(name = "smeshariks", schema = "public")
 @Data
 @NoArgsConstructor
 public class Smesharik {

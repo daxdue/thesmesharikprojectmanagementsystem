@@ -86,17 +86,24 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" th:id="'taskLabel' + ${request.id}" th:text="${request.material}"></h5>
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${request.id}" th:text="${request.material.title}"></h5>
                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                         </div>
                                         <div class="modal-body">
-
+                                            <p class="card-text font-weight-bold">Количество: <span class="font-weight-normal" th:text="${request.quantity}"></span></p>
+                                            <p class="card-text font-weight-bold">Работник: <span class="font-weight-normal" th:text="${request.user.name}"></span></p>
+                                            <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${request.project.title}"></span></p>
                                         </div>
                                         <!--div class="modal-footer">
 
                                         </div-->
+                                        <div class="modal-footer">
+                                            <form th:action="@{/warehouse/requests/{id}/{action}(id=${request.id}, action='complete')}">
+                                                <button type="submit" class="btn btn-primary">Выполнено</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

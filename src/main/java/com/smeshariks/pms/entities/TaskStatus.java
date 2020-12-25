@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "task_statuses", schema = "public")
 @Data
 @NoArgsConstructor
 public class TaskStatus {

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "timings")
+@Table(name = "timings", schema = "public")
 public class Timings {
 
     @Id

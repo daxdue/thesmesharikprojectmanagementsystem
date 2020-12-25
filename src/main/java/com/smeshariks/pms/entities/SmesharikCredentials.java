@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
-@Table(name = "credentials")
+@Table(name = "credentials", schema = "public")
 @Data
 @NoArgsConstructor
 public class SmesharikCredentials implements UserDetails {

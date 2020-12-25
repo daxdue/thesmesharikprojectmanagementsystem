@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Entity
-@Table(name = "projects")
+@Table(name = "projects", schema = "public")
 @Data
 @NoArgsConstructor
 public class Project {

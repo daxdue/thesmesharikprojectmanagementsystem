@@ -8,11 +8,10 @@ import lombok.ToString;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
-@Table(name = "materials_orders")
+@Table(name = "materials_orders", schema = "public")
 @Data
 @NoArgsConstructor
 @Component
@@ -32,9 +31,6 @@ public class MaterialOrder {
     private Integer quantity;
 
 
-    @ManyToMany
-    @JoinTable(name = "orders_materials",
-        joinColumns = @JoinColumn(name = "material_order_id"),
-        inverseJoinColumns = @JoinColumn(name = "order_id"))
+    @ManyToMany(mappedBy = "materialOrders")
     private List<Order> orders;
 }

@@ -63,10 +63,44 @@
                         <th:block th:each="order : ${ordersActive}">
                             <div class="col-md-4">
                                 <div class="card shadow p-3 mb-5 bg-white">
-                                    <h5 class="card-header text-primary" th:text="${order.id}">Project title</h5>
+                                    <h5 class="card-header text-primary">Заказ №<span th:text="${order.id}"></span></h5>
                                     <div class="card-body">
                                         <p class="card-text font-weight-bold">Количество позиций: <span class="font-weight-normal" th:text="${order.materialOrders.size()}"></span></p>
-                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#request' + ${order.id}">Подробнее</button>
+                                        <p class="card-text font-weight-bold">Дата заказа: <span class="font-weight-normal" th:text="${order.getOrderDate()}"></span></p>
+                                        <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#order' + ${order.id}">Подробнее</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal fade" th:id="'order' + ${order.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${order.id}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" th:id="'taskLabel' + ${order.id}">Заказ № <span th:text="${order.id}"></span></h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p class="card-text font-weight-bold">Количество позиций: <span class="font-weight-normal" th:text="${order.materialOrders.size()}"></span></p>
+                                            <p class="card-text font-weight-bold">Дата заказа: <span class="font-weight-normal" th:text="${order.getOrderDate()}"></span></p>
+                                            <p class="card-text font-weight-bold">Позиции</p>
+                                            <th:block th:each="position : ${order.materialOrders}">
+                                                <div class="row mb-2">
+                                                    <div class="col-5">
+                                                        <p class="h6 font-weight-bold" th:text="${position.material.title}">Материал</p>
+                                                    </div>
+                                                    <div class="col-7">
+                                                        <p class="h6 font-weight-normal" th:text="${position.quantity}"></p>
+                                                    </div>
+                                                </div>
+                                            </th:block>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <form th:action="@{/warehouse/orders/{id}/{action}(id=${order.id}, action='complete')}">
+                                                <button type="submit" class="btn btn-primary">Подтвердить поступление</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -84,44 +118,62 @@
                 </div>
             </div>
 
-
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
                 <h5 class="my-0 font-weight-normal text-primary">Необходимо заказать</h5>
             </div>
+            <th:block th:if="${needOrder.materialOrders.size() != 0}">
 
-            <form th:action="@{/warehouse/shipments}" th:object="${orderList}" method="post">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th scope="col">Наименование</th>
-                        <th scope="col">Остаток на складе</th>
-                        <th scope="col">Минимально необходимое кол-во</th>
-                    </tr>
-                    </thead>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th scope="col">Наименование</th>
+                            <th scope="col">Остаток на складе</th>
+                            <th scope="col">Кол-во для заказа</th>
+                            <th scope="col">Цена/ед</th>
+                            <th scope="col">Общая стоимость</th>
+                        </tr>
+                        </thead>
 
-                    <tbody>
-                    <th:block th:if="${needOrder ne null}">
-                        <th:block th:each="material, stat : ${needOrder}">
-                            <tr>
-                                <td th:text="${material.material.title}"></td>
-                                <td th:text="${material.material.balance}"></td>
-                                <td><input type="number" th:value="${material.quantity}" th:field="*{quantity[__${stat.index}__]}"></td>
+                        <tbody>
+                        <th:block th:if="${needOrder ne null}">
+                            <th:block th:if="${needOrder.status == 0}">
+                                <th:block th:each="order : ${needOrder.materialOrders}">
+                                    <tr>
+                                        <td th:text="${order.material.title}"></td>
+                                        <td th:text="${order.material.balance}"></td>
+                                        <td th:text="${order.quantity}"></td>
+                                        <td th:text="${order.material.cost}"></td>
+                                        <td th:text="${order.quantity * order.material.cost + '₡'}"></td>
+                                    </tr>
+                                </th:block>
+                            </th:block>
 
-                                <input type="hidden" th:value="${material.id}" th:field="*{id[__${stat.index}__]}">
-                            </tr>
                         </th:block>
-                    </th:block>
+                        <tr>
+                            <td><p class="h5">Итог</p></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td><p class="h5" th:text="${needOrder.total + '₡'}"></p></td>
+                        </tr>
+                        </tbody>
 
-                    </tbody>
-                </table>
+                    </table>
 
-                <div class="form-group col-md-12">
-                    <button type="submit" class="btn btn-primary">
-                        Заказать
-                    </button>
+                    <form th:action="@{/warehouse/shipments}" th:object="${orders}" method="post">
+                        <input type="hidden" th:value="${needOrder.materialOrders.size()}" th:attr="name='quantity'">
+                        <div class="form-group col-md-12">
+                            <button type="submit" class="btn btn-primary">
+                                Заказать
+                            </button>
+                        </div>
+                    </form>
+            </th:block>
+            <th:block th:if="${needOrder.materialOrders.size() == 0}">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                    <h6 class="my-0 font-weight-light text-secondary">Нет материалов для заказа</h6>
                 </div>
-            </form>
-
+            </th:block>
 
         </main>
     </div>

@@ -28,15 +28,18 @@ public class WarehouseController {
     private final MaterialService materialService;
     private final MaterialRequestService materialRequestService;
     private final OrderService orderService;
+    private final MaterialOrderService materialOrderService;
 
     @Autowired
     public WarehouseController(MaterialService materialService, MaterialRequestService materialRequestService,
-                               UserService userService, ProjectService projectService, OrderService orderService) {
+                               UserService userService, ProjectService projectService, OrderService orderService,
+                               MaterialOrderService materialOrderService) {
         this.materialService = materialService;
         this.materialRequestService = materialRequestService;
         this.userService = userService;
         this.projectService = projectService;
         this.orderService = orderService;
+        this.materialOrderService = materialOrderService;
     }
 
     @PostMapping("/request")
@@ -87,6 +90,7 @@ public class WarehouseController {
         material.setBalance(materialDto.getBalance());
         material.setCost(materialDto.getCost());
         material.setReserve(0);
+        material.setOrdered(0);
         material.setLastDelivery(new Timestamp(new Date().getTime()));
         material.setIsEquipment(materialDto.getIsEquipment());
         material.setMinimumVolume(materialDto.getMinimumVolume());
@@ -143,6 +147,12 @@ public class WarehouseController {
                     break;
 
                 case "complete":
+                    Material material = materialService.findMaterial(materialRequest.getMaterial().getId());
+                    if(material != null) {
+                        int balance =material.getBalance();
+                        material.setBalance(balance - materialRequest.getQuantity());
+                        materialService.updateMaterial(material);
+                    }
                     materialRequest.setStatus(RequestStatus.COMPLETED.getValue());
                     break;
             }
@@ -151,6 +161,34 @@ public class WarehouseController {
         }
 
         return "redirect:/warehouse/requests";
+    }
+
+    @GetMapping("/orders/{id}/{action}")
+    public String updateOrder(@PathVariable Integer id, @PathVariable String action, Model model) {
+        Order order = orderService.findOrderById(id);
+        if(order != null) {
+            switch (action) {
+                case "start":
+                    order.setStatus(RequestStatus.IN_PROCESS.getValue());
+                    break;
+
+                case "complete":
+                    order.setStatus(RequestStatus.COMPLETED.getValue());
+                    break;
+            }
+
+            for(MaterialOrder materialOrder : order.getMaterialOrders()) {
+                Material material = materialService.findMaterial(materialOrder.getMaterial().getId());
+                if(material != null) {
+                    //int actualCount = material.getBalance();
+                    material.setBalance(material.getBalance() + materialOrder.getQuantity());
+                    materialService.updateMaterial(material);
+                }
+            }
+            orderService.updateOrder(order);
+        }
+
+        return "redirect:/warehouse";
     }
 
     @GetMapping("/shipments")
@@ -164,13 +202,24 @@ public class WarehouseController {
 
         List<Order> ordersActive = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
 
+        //Запрошенные материалы
         List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+        //Все материалы
         List<Material> materials = materialService.findAllMaterials();
-        MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits);
+        //Все заказы материалов
+        List<MaterialOrder> materialOrders = new ArrayList<>();
+        List<Order> orders = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
+        for(Order order : orders) {
+            for(MaterialOrder materialOrder : order.getMaterialOrders()) {
+                materialOrders.add(materialOrder);
+            }
+        }
+
+        MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits, materialOrders);
         materialsCalculator.calculate();
 
-        model.addAttribute("needOrder", materialsCalculator.getNeedsOrderPositions());
-        model.addAttribute("orderList", new OrdersDto());
+        model.addAttribute("needOrder", materialsCalculator.getOrder());
+        model.addAttribute("orders", new OrdersDto());
         model.addAttribute("user", smesharikDto);
         model.addAttribute("ordersActive", ordersActive);
 
@@ -178,9 +227,27 @@ public class WarehouseController {
     }
 
     @PostMapping("/shipments")
-    public String orderMaterials(@ModelAttribute("needOrder") List<MaterialOrder> needsOrder) {
+    public String orderMaterials(@ModelAttribute("needOrder") OrdersDto needOrder) {
+
+        //Запрошенные материалы
+        List<MaterialRequest> materialRequestsWaits = materialRequestService.findRequestsByStatus(RequestStatus.REQUESTED);
+        //Все материалы
+        List<Material> materials = materialService.findAllMaterials();
+        //Все заказы материалов
         List<MaterialOrder> materialOrders = new ArrayList<>();
-        System.out.println(needsOrder.size());
+        List<Order> orders = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
+        for(Order order : orders) {
+            for(MaterialOrder materialOrder : order.getMaterialOrders()) {
+                materialOrders.add(materialOrder);
+            }
+        }
+        MaterialsCalculator materialsCalculator = new MaterialsCalculator(materials, materialRequestsWaits, materialOrders);
+        materialsCalculator.calculate();
+
+        materialOrderService.saveList(materialsCalculator.getOrder().getMaterialOrders());
+        Order order = materialsCalculator.getOrder();
+        order.setStatus(RequestStatus.IN_PROCESS.getValue());
+        orderService.save(order);
 
         return "redirect:/warehouse/shipments";
     }
