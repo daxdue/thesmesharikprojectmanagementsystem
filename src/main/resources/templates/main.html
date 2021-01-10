@@ -59,6 +59,15 @@
                     </ul>
                 </div>
 
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link" th:href="@{/archive}">
+                            <span data-feather="home">Архив</span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+
                 <!--div sec:authorize="hasRole('ROLE_ADMIN')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
@@ -233,6 +242,18 @@
                                     <h6 class="card-subtitle mb-3 text">Заказов: <span th:utext="${orders}">0</span></h6>
                                     <p class="card-text">Необходимо заказать: <span th:utext="${needOrder.materialOrders.size()}">0</span></p>
                                     <a th:href="@{/warehouse/shipments}" class="card-link stretched-link">Подробнее</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="card shadow p-3 mb-5 bg-white" style="width: 18rem">
+                                <div class="card-header">
+                                    <span class="badge badge-pill badge-success">Готовые проекты</span>
+                                </div>
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-3 text">Доставка: <span th:utext="${deliveries}">0</span></h6>
+                                    <p class="card-text">Самовывоз: <span th:utext="${samovivoz}">0</span></p>
+                                    <a th:href="@{/project/get(type='in_delivery')}" class="card-link stretched-link">Подробнее</a>
                                 </div>
                             </div>
                         </div>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Архив | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" th:href="@{/project/create}">
+                                <span data-feather="home">Создать проект</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link" th:href="@{/archive}">
+                            <span data-feather="home">Архив</span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!--div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Управление пользователями</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Склад</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div-->
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <th:block th:switch="${type}">
+                <th:block th:case="'projects'">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                        <h5 class="my-0 font-weight-normal text-primary">Архивные проекты</h5>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+
+                            <th:block th:if="${projects.size()!=0}">
+                                <th:block th:each="project : ${projects}">
+                                    <div class="col-md-4">
+                                        <div class="card shadow p-3 mb-5 bg-white">
+                                            <h5 class="card-header text-primary" th:text="${project.title}">Project title</h5>
+                                            <div class="card-body">
+                                                <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                                <p class="card-text font-weight-bold">Заказчик: <span class="font-weight-normal" th:text="${project.owner.name}"></span></p>
+                                                <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${project.getStartTimestamp()}"></span></p>
+                                                <p class="card-text font-weight-bold">Окончание: <span class="font-weight-normal" th:text="${project.getDeadTimestamp()}"></span></p>
+                                                <p class="card-text font-weight-bold">Стоимость: <span class="font-weight-normal" th:text="${project.getActualConst()}"></span><span class="font-weight-normal"> ₡</span></p>
+                                                <p class="card-text font-weight-bold">Создан: <span class="font-weight-normal" th:text="${project.getAddedTimestamp()}"></span></p>
+                                                <div class="progress mb-1">
+                                                    <div class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${project.calculateProgress()}" th:style="'width:' + ${project.calculateProgress()} + '%'"></div>
+                                                </div>
+
+                                                <a th:href="@{/project/{id}(id=${project.id})}" class="card-link stretched-link">К деталям</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${projects.size() == 0}">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                                    <h6 class="my-0 font-weight-light text-secondary">Нет проектов в архиве</h6>
+                                </div>
+                            </th:block>
+
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:case="'tasks'">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                        <h5 class="my-0 font-weight-normal text-primary">Архивные задачи</h5>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+
+                            <th:block th:if="${tasks.size()!=0}">
+                                <th:block th:each="task : ${tasks}">
+                                    <div class="col-md-4">
+                                        <div class="card shadow p-3 mb-5 bg-white">
+                                            <h5 class="card-header text-primary" th:text="${task.title}">Project title</h5>
+                                            <div class="card-body">
+                                                <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                                <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                                                    <p class="card-text font-weight-bold">Исполнитель: <span class="font-weight-normal" th:text="${task.executor.name}"></span></p>
+                                                </sec:authorize>
+                                                <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${task.project.title}"></span></p>
+                                                <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${task.getStart()}"></span></p>
+                                                <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${task.getDeadline()}"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${tasks.size() == 0}">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                                    <h6 class="my-0 font-weight-light text-secondary">Нет задач в архиве</h6>
+                                </div>
+                            </th:block>
+
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:case="'requests'">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                        <h5 class="my-0 font-weight-normal text-primary">Архивные запросы</h5>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+
+                            <th:block th:if="${requests.size()!=0}">
+                                <th:block th:each="request : ${requests}">
+                                    <div class="col-md-4">
+                                        <div class="card shadow p-3 mb-5 bg-white">
+                                            <h5 class="card-header text-primary" th:text="${request.material.title}">Project title</h5>
+                                            <div class="card-body">
+                                                <p class="card-text font-weight-bold">Количество: <span class="font-weight-normal" th:text="${request.quantity}"></span></p>
+                                                <p class="card-text font-weight-bold">Работник: <span class="font-weight-normal" th:text="${request.user.name}"></span></p>
+                                                <p class="card-text font-weight-bold">Проект: <span class="font-weight-normal" th:text="${request.project.title}"></span></p>
+                                                <p class="card-text font-weight-bold">Дедлайн: <span class="font-weight-normal" th:text="${request.getDead()}"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${requests.size() == 0}">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                                    <h6 class="my-0 font-weight-light text-secondary">Нет заявок в архиве</h6>
+                                </div>
+                            </th:block>
+
+                        </div>
+                    </div>
+                </th:block>
+                <th:block th:case="'orders'">
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                        <h5 class="my-0 font-weight-normal text-primary">Архивные заказы</h5>
+                    </div>
+                    <div class="container">
+                        <div class="row">
+
+                            <th:block th:if="${orders.size()!=0}">
+                                <th:block th:each="order : ${orders}">
+                                    <div class="col-md-4">
+                                        <div class="card shadow p-3 mb-5 bg-white">
+                                            <h5 class="card-header text-primary">Заказ №<span th:text="${order.id}"></span></h5>
+                                            <div class="card-body">
+                                                <p class="card-text font-weight-bold">Количество позиций: <span class="font-weight-normal" th:text="${order.materialOrders.size()}"></span></p>
+                                                <p class="card-text font-weight-bold">Дата заказа: <span class="font-weight-normal" th:text="${order.getOrderDate()}"></span></p>
+                                                <button type="button" class="btn btn-link stretched-link" data-toggle="modal" data-target="#staticBackdrop" th:attr="data-target='#order' + ${order.id}">Подробнее</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" th:id="'order' + ${order.id}" data-backdrop="static" tabindex="-1" th:attr="aria-labelledby='staticBackdropLabel'+${order.id}" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" th:id="'taskLabel' + ${order.id}">Заказ № <span th:text="${order.id}"></span></h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p class="card-text font-weight-bold">Количество позиций: <span class="font-weight-normal" th:text="${order.materialOrders.size()}"></span></p>
+                                                    <p class="card-text font-weight-bold">Дата заказа: <span class="font-weight-normal" th:text="${order.getOrderDate()}"></span></p>
+                                                    <p class="card-text font-weight-bold">Позиции</p>
+                                                    <th:block th:each="position : ${order.materialOrders}">
+                                                        <div class="row mb-2">
+                                                            <div class="col-5">
+                                                                <p class="h6 font-weight-bold" th:text="${position.material.title}">Материал</p>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <p class="h6 font-weight-normal" th:text="${position.quantity}"></p>
+                                                            </div>
+                                                        </div>
+                                                    </th:block>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </th:block>
+                            </th:block>
+
+                            <th:block th:if="${orders.size() == 0}">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                                    <h6 class="my-0 font-weight-light text-secondary">Нет заказов в архиве</h6>
+                                </div>
+                            </th:block>
+
+                        </div>
+                    </div>
+                </th:block>
+            </th:block>
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

@@ -165,6 +165,23 @@ public class MainController {
             //Все заказы материалов
             List<MaterialOrder> materialOrders = new ArrayList<>();
             List<Order> orders = orderService.findOrdersByStatus(RequestStatus.IN_PROCESS);
+            List<Project> projects = projectService.findByStatus(Statuses.IN_DEVIVERY);
+
+            int deliveries = 0;
+            int samovivoz = 0;
+
+            for(Project project : projects) {
+                try {
+                    if(project.getDeliveryAddress() == null) {
+                        samovivoz++;
+                    } else {
+                        deliveries++;
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
             for(Order order : orders) {
                 for(MaterialOrder materialOrder : order.getMaterialOrders()) {
                     materialOrders.add(materialOrder);
@@ -178,8 +195,45 @@ public class MainController {
             model.addAttribute("positions", positionQuantity);
             model.addAttribute("activeRequests", materialRequestsActive.size());
             model.addAttribute("waitRequests", materialRequestsWaits.size());
+            model.addAttribute("deliveries", deliveries);
+            model.addAttribute("samovivoz", samovivoz);
 
             //Остатки по складу
+
+
+        } else if(user.getUserRole() == UserRole.CUSTOMER) {
+
+            allProjects = projectService.findByUser(user);
+            int activeProjects = 0;
+            int notApproved = 0;
+            int completed = 0;
+            int rejected = 0;
+            if(allProjects != null) {
+
+                for (Project project : allProjects) {
+
+                    switch (project.getStatus()) {
+                        case NOT_APPROVED:
+                            notApproved++;
+                            break;
+
+                        case IN_WORK:
+                            activeProjects++;
+                            break;
+
+                        case COMPLETED:
+                            completed++;
+                            break;
+
+                        case REJECTED:
+                            rejected++;
+                            break;
+                    }
+                }
+                model.addAttribute("activeProjects", activeProjects);
+                model.addAttribute("notApprovedProjects", notApproved);
+                model.addAttribute("completedProjects", completed);
+            }
 
 
         } else {

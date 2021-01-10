@@ -40,6 +40,9 @@ public class Project {
     @Getter
     private Integer currentStatus;
 
+    @Column(name = "delivery_address", nullable = true)
+    private String deliveryAddress;
+
     @Transient
     private String tsStart;
 
@@ -103,6 +106,18 @@ public class Project {
 
             case 4:
                 statuses = Statuses.REJECTED;
+                break;
+
+            case 5:
+                statuses = Statuses.WAIT;
+                break;
+
+            case 7:
+                statuses = Statuses.ARCHIVATED;
+                break;
+
+            case 8:
+                statuses = Statuses.IN_DEVIVERY;
                 break;
         }
 

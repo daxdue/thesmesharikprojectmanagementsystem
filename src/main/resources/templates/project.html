@@ -58,7 +58,14 @@
                         </li>
                     </ul>
                 </div>
-
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link" th:href="@{/archive}">
+                            <span data-feather="home">Архив</span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
                 <!--div sec:authorize="hasRole('ROLE_ADMIN')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
@@ -93,11 +100,10 @@
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-                <h5 class="my-0 font-weight-normal text-primary">Проект</h5>
-            </div>
-
             <div class="container">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Проект</h5>
+                </div>
                 <div class="row">
                     <div class="col-8">
                         <div class="row mb-2">
@@ -181,13 +187,19 @@
                             </div>
                             <th:block th:if="${project.getCurrentStatus() == 2}">
                                 <div class="row mb-3 align-items-center">
-                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
-                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                    <form th:action="@{/project/calculate/{id}(id=${project.id})}" th:object="${project}" method="get">
+                                        <!--input type="hidden" th:value="${project.description}" th:attr="name='description'">
                                         <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
                                         <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
                                         <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
-                                        <input type="hidden"  th:value="3" th:attr="name='currentStatus'">
-                                        <button type="submit" class="btn btn-primary">Завершить</button>
+                                        <input type="hidden"  th:value="3" th:attr="name='currentStatus'"-->
+                                        <th:block th:if="${incompletedTasks == true}">
+                                            <button type="submit" class="btn btn-primary" disabled>Завершение</button>
+                                        </th:block>
+                                        <th:block th:unless="${incompletedTasks == true}">
+                                            <button type="submit" class="btn btn-primary">Завершение</button>
+                                        </th:block>
+                                        <!--button type="submit" class="btn btn-primary">Завершить</button-->
                                     </form>
                                 </div>
                             </th:block>
@@ -221,7 +233,6 @@
                             </div>
                             <th:block th:if="${project.currentStatus == 1}">
                                 <div class="row mb-3 align-items-center">
-
                                     <form th:action="@{/project/update/{id}(id=${project.id})}" method="get">
                                         <button type="submit" class="btn btn-primary">Редактировать</button>
                                     </form>
@@ -239,7 +250,140 @@
                                 </div>
                             </th:block>
                         </div>
+                    </div>
 
+                    <div sec:authorize="hasRole('ROLE_CUSTOMER')">
+                        <th:block th:if="${project.currentStatus == 3}">
+                            <div class="container">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                                    <h5 class="my-0 font-weight-normal text-primary">Доставка</h5>
+                                </div>
+                                <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                    <input type="hidden"  th:value="8" th:attr="name='currentStatus'">
+                                    <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                    <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                    <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                    <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+
+                                    <script type="text/javascript">
+                                        function EnableDisableTextBox() {
+                                            var deliveryValue = document.getElementById("inlineRadio2");
+                                            var deliveryAddressValue = document.getElementById("delAddress");
+                                            deliveryAddressValue.disabled = deliveryValue.checked ? false : true;
+                                            if (!deliveryAddressValue.disabled) {
+                                                deliveryAddressValue.focus();
+                                            }
+                                        }
+                                    </script>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="row mb-1">
+
+                                                <div class="form-group col-md-12 md-3">
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1" onclick="EnableDisableTextBox()"checked>
+                                                        <label class="form-check-label" for="inlineRadio1">Самовывоз</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" onclick="EnableDisableTextBox()">
+                                                        <label class="form-check-label" for="inlineRadio2">Курьер</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-md-12 md-3">
+                                                    <label for="delAddress">Адрес доставки</label>
+                                                    <input type="text" class="form-control" id="delAddress" placeholder="Введите адрес" th:attr="name='deliveryAddress'" disabled="disabled">
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="row mb-1">
+                                                <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+
+                            </div>
+                        </th:block>
+                        <th:block th:if="${project.currentStatus == 8}">
+                            <div class="container">
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                                    <h5 class="my-0 font-weight-normal text-primary">Доставка</h5>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row mb-2">
+                                            <div class="col-7">
+                                                <p class="h6 font-weight-bold">Тип доставки</p>
+                                            </div>
+                                            <div class="col-5">
+                                                <th:block th:if="${project.deliveryAddress == null}">
+                                                    <p class="h6 font-weight-normal">самовывоз</p>
+                                                </th:block>
+                                                <th:block th:if="${project.deliveryAddress ne null}">
+                                                    <p class="h6 font-weight-normal">курьер</p>
+                                                </th:block>
+
+                                            </div>
+                                        </div>
+                                        <th:block th:if="${project.deliveryAddress ne null}">
+                                            <div class="row mb-2">
+                                                <div class="col-5">
+                                                    <p class="h6 font-weight-bold">Адрес доставки</p>
+                                                </div>
+                                                <div class="col-7">
+                                                    <p class="h6 font-weight-normal" th:text="${project.deliveryAddress}"></p>
+                                                </div>
+                                            </div>
+
+                                        </th:block>
+                                    </div>
+                                </div>
+                                <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                    <input type="hidden"  th:value="8" th:attr="name='currentStatus'">
+                                    <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                    <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                    <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                    <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                    <!--div-- class="row">
+                                        <div class="col-8">
+                                            <div class="row mb-2">
+                                                <th:block th:if="${project.deliveryAddress == null}">
+                                                    <div class="row mb-1">
+                                                        <div class="col-5">
+                                                            <p class="h6 font-weight-bold">Тип доставки</p>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <p class="h6 font-weight-normal">самовывоз</p>
+                                                        </div>
+                                                    </div>
+                                                </th:block>
+                                                <th:block th:if="${project.deliveryAddress ne null}">
+                                                    <div class="row mb-1">
+                                                        <div class="col-5">
+                                                            <p class="h6 font-weight-bold">Тип доставки</p>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <p class="h6 font-weight-normal">курьер</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-1">
+                                                        <div class="col-5">
+                                                            <p class="h6 font-weight-bold">Адрес</p>
+                                                        </div>
+                                                        <div class="col-7">
+                                                            <p class="h6 font-weight-normal" th:text="${project.deliveryAddress}"></p>
+                                                        </div>
+                                                    </div>
+                                                </th:block>
+                                            </div>
+                                        </div>
+                                    </div-->
+                                </form>
+                            </div>
+                        </th:block>
                     </div>
                 </div>
 
@@ -360,6 +504,7 @@
                     </th:block>
                 </div>
 
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_CUSTOMER')">
                 <th:block th:if="${project.getCurrentStatus() == 2}">
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
                         <h5 class="my-0 font-weight-normal text-primary">Кол-во задач <span th:text="${tasks.size()}"></span></h5>
@@ -430,6 +575,69 @@
                         </tbody>
                     </table>
                 </th:block>
+                </div>
+
+                <div sec:authorize="hasRole('ROLE_WAREHOUSEMAN')">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="row mb-2">
+                                <div class="col-5">
+                                    <p class="h6 font-weight-bold">Тип доставки</p>
+                                </div>
+                                <div class="col-7">
+                                    <th:block th:if="${project.deliveryAddress == null}">
+                                        <p class="h6 font-weight-normal">самовывоз</p>
+                                    </th:block>
+                                    <th:block th:if="${project.deliveryAddress ne null}">
+                                        <p class="h6 font-weight-normal">курьер</p>
+                                    </th:block>
+
+                                </div>
+                            </div>
+                            <th:block th:if="${project.deliveryAddress ne null}">
+                                <div class="row mb-2">
+                                    <div class="col-5">
+                                        <p class="h6 font-weight-bold">Адрес доставки</p>
+                                    </div>
+                                    <div class="col-7">
+                                        <p class="h6 font-weight-normal" th:text="${project.deliveryAddress}"></p>
+                                    </div>
+                                </div>
+                                <th:block th:if="${project.getCurrentStatus() == 8}">
+                                <div class="row mb-2">
+                                    <div class="row mb-3 align-items-center">
+                                        <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                            <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                            <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                            <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                            <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                            <input type="hidden"  th:value="7" th:attr="name='currentStatus'">
+                                            <button type="submit" class="btn btn-primary">Доставлено</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                </th:block>
+                            </th:block>
+                            <th:block th:if="${project.deliveryAddress == null}">
+                                <th:block th:if="${project.getCurrentStatus() == 8}">
+                                <div class="row mb-2">
+                                    <div class="row mb-3 align-items-center">
+                                        <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                            <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                            <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                            <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                            <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                            <input type="hidden"  th:value="7" th:attr="name='currentStatus'">
+                                            <button type="submit" class="btn btn-primary">Отгружено</button>
+                                        </form>
+                                    </div>
+                                </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
         </main>

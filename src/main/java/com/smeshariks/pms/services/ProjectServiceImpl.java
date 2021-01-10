@@ -46,7 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         if(project != null) {
             projectRepository.edit(project.getDescription(), project.getCost(), project.getStartTime(),
-                    project.getDeadTime(), project.getCurrentStatus(), project.getId());
+                    project.getDeadTime(), project.getCurrentStatus(), project.getDeliveryAddress(), project.getId());
         }
     }
 
@@ -76,6 +76,14 @@ public class ProjectServiceImpl implements ProjectService {
 
             case REJECTED:
                 projects = projectRepository.findByCurrentStatus(Statuses.REJECTED.getValue());
+                break;
+
+            case IN_DEVIVERY:
+                projects = projectRepository.findByCurrentStatus(Statuses.IN_DEVIVERY.getValue());
+                break;
+
+            case ARCHIVATED:
+                projects = projectRepository.findByCurrentStatus(Statuses.ARCHIVATED.getValue());
                 break;
         }
         return projects;

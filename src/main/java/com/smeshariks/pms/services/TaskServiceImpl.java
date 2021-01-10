@@ -53,4 +53,5 @@ public class TaskServiceImpl implements TaskService {
     public List<Task> findTasksByExecutor(User user) {
         return taskRepository.findTasksByExecutor(user);
     }
+
 }

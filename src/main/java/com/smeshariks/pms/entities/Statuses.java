@@ -7,7 +7,9 @@ public enum Statuses {
     COMPLETED(3, "завершен"),
     REJECTED(4, "отклонен"),
     WAIT(5, "ожидает"),
-    EXPIRED(6, "просрочена");
+    EXPIRED(6, "просрочена"),
+    ARCHIVATED(7, "в архиве"),
+    IN_DEVIVERY(8, "в доставке");
 
     private final int value;
     private final String name;

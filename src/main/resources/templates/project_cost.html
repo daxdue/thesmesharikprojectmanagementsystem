@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Итоговый расчет | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+
+    <meta name="theme-color" content="#563d7c">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+    <a class="navbar-brand" th:href="@{/}">S P M S</a>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+            </li>
+
+        </ul>
+    </div>
+    <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                    <span>Профиль</span>
+                </h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-4">
+                        <a class="nav-link active" href="#">
+                            <span data-feather="home" th:text="${user.name}"></span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                            <span th:text="${user.getUserRole().displayValue}"></span>
+                        </h6>
+                    </li>
+                </ul>
+
+
+
+                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" th:href="@{/project/create}">
+                                <span data-feather="home">Создать проект</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!--div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Управление пользователями</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Склад</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" href="#">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div-->
+
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                <h5 class="my-0 font-weight-normal text-primary">Проект</h5>
+            </div>
+
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Название проекта</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.title}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Описание проекта</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.description}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Заказчик</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.owner.name}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Дата начала</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getStartTimestamp()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Дата окончания</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal" th:text="${project.getDeadTimestamp()}"></p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Стоимость материалов</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal"><span th:text="${materialsCost}"></span> ₡</p>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-5">
+                                <p class="h6 font-weight-bold">Стоимость работ</p>
+                            </div>
+                            <div class="col-7">
+                                <p class="h6 font-weight-normal"><span th:text="${workCost}"></span> ₡</p>
+                            </div>
+                        </div>
+                        <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                            <input type="hidden"  th:value="3" th:attr="name='currentStatus'">
+                            <div class="row mb-2">
+                                <div class="col-5">
+                                    <p class="h6 font-weight-bold">Итоговая стоимость</p>
+                                </div>
+                                <div class="col-4">
+                                    <input type="number" class="form-control" id="cost" min="0" step="1" placeholder="Смешкоинов" th:value="${materialsCost + workCost}" th:attr="name='cost'" required>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-5">
+                                    <button type="submit" class="btn btn-primary">Завершить</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="col-4">
+
+                        <!--div sec:authorize="hasRole('ROLE_ADMIN')"-->
+                            <div class="row mb-3 align-items-center">
+                                <button type="button" class="btn btn-primary">Чат с заказчиком</button>
+                            </div>
+                            <th:block th:if="${project.getCurrentStatus() == 2}">
+                                <div class="row mb-3 align-items-center">
+                                    <form th:action="@{/project/update/{id}(id=${project.id})}" th:object="${project}" method="post">
+                                        <input type="hidden" th:value="${project.description}" th:attr="name='description'">
+                                        <input type="hidden" th:value="${project.cost}" th:attr="name='cost'">
+                                        <input type="hidden" th:value="${project.startTime}" th:attr="name='startTime'">
+                                        <input type="hidden" th:value="${project.deadTime}" th:attr="name='deadTime'">
+                                        <input type="hidden"  th:value="3" th:attr="name='currentStatus'">
+                                        <button type="submit" class="btn btn-primary" disabled>Завершить</button>
+                                        <!--button type="submit" class="btn btn-primary">Завершить</button-->
+                                    </form>
+                                </div>
+                            </th:block>
+                        <!--/div-->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
+
+</body>
+</html>

@@ -59,6 +59,15 @@
                     </ul>
                 </div>
 
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-1">
+                        <a class="nav-link" th:href="@{/archive}">
+                            <span data-feather="home">Архив</span>
+                            <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                </ul>
+
                 <!--div sec:authorize="hasRole('ROLE_ADMIN')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
@@ -97,7 +106,7 @@
                 <h5 class="my-0 font-weight-normal text-primary">Проекты</h5>
             </div>
 
-
+            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
             <ul class="nav nav-tabs mb-4">
                 <th:block th:switch="${currentType}">
                     <th:block th:case="'active'">
@@ -114,7 +123,15 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='archived')}">В архиве</a>
                         </li>
                     </th:block>
                     <th:block th:case="'inactive'">
@@ -131,7 +148,15 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='archived')}">В архиве</a>
                         </li>
                     </th:block>
                     <th:block th:case="'completed'">
@@ -148,7 +173,40 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='archived')}">В архиве</a>
+                        </li>
+                    </th:block>
+                    <th:block th:case="'delivery'">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='active')}">В работе</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='inactive')}">В ожидании</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='completed')}">Завершены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='archived')}">В архиве</a>
                         </li>
                     </th:block>
                     <th:block th:case="'rejected'">
@@ -165,7 +223,40 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link active" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='archived')}">В архиве</a>
+                        </li>
+                    </th:block>
+                    <th:block th:case="'archived'">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='active')}">В работе</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='inactive')}">В ожидании</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='completed')}">Завершены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='delivery')}">В доставке</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/project/get(type='rejected')}">Отклонены</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/project/get(type='archived')}">В архиве</a>
                         </li>
                     </th:block>
                 </th:block>
@@ -207,7 +298,44 @@
 
                 </div>
             </div>
+            </div>
 
+            <div sec:authorize="hasRole('ROLE_WAREHOUSEMAN')">
+                <div class="container">
+                    <div class="row">
+
+                        <th:block th:if="${projects.size()!=0}">
+                            <th:block th:each="project : ${projects}">
+                                <div class="col-md-4">
+                                    <div class="card shadow p-3 mb-5 bg-white">
+                                        <h5 class="card-header text-primary" th:text="${project.title}">Project title</h5>
+                                        <div class="card-body">
+                                            <!--h5 class="card-title" th:text="${project.description}">Project description</h5-->
+                                            <p class="card-text font-weight-bold">Заказчик: <span class="font-weight-normal" th:text="${project.owner.name}"></span></p>
+                                            <p class="card-text font-weight-bold">Начало: <span class="font-weight-normal" th:text="${project.getStartTimestamp()}"></span></p>
+                                            <p class="card-text font-weight-bold">Окончание: <span class="font-weight-normal" th:text="${project.getDeadTimestamp()}"></span></p>
+                                            <p class="card-text font-weight-bold">Стоимость: <span class="font-weight-normal" th:text="${project.getActualConst()}"></span><span class="font-weight-normal"> ₡</span></p>
+                                            <p class="card-text font-weight-bold">Создан: <span class="font-weight-normal" th:text="${project.getAddedTimestamp()}"></span></p>
+                                            <div class="progress mb-1">
+                                                <div class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${project.calculateProgress()}" th:style="'width:' + ${project.calculateProgress()} + '%'"></div>
+                                            </div>
+
+                                            <a th:href="@{/project/{id}(id=${project.id})}" class="card-link stretched-link">К деталям</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </th:block>
+
+                        <th:block th:if="${projects.size() == 0}">
+                            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-1 pb-1 mb-1 ">
+                                <h6 class="my-0 font-weight-light text-secondary">Нет проектов в данной категории</h6>
+                            </div>
+                        </th:block>
+
+                    </div>
+                </div>
+            </div>
         </main>
     </div>
 </div>

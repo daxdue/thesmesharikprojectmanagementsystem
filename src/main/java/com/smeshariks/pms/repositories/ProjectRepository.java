@@ -24,10 +24,11 @@ public interface ProjectRepository extends JpaRepository<Project, Integer> {
     List<Project> findByCurrentStatus(@Param(value = "status") Integer status);
 
     @Modifying
-    @Query("update Project p set p.description = :description, p.cost = :cost, p.startTime = :startTime, p.deadTime = :deadTime, p.currentStatus = :currentStatus where p.id = :id")
+    @Query("update Project p set p.description = :description, p.cost = :cost, p.startTime = :startTime, p.deadTime = :deadTime, p.currentStatus = :currentStatus, p.deliveryAddress = :deliveryAddress where p.id = :id")
     void edit(@Param(value = "description") String description, @Param(value = "cost") Double cost,
               @Param(value = "startTime") Timestamp startTime, @Param(value = "deadTime") Timestamp deadTime,
-              @Param(value = "currentStatus") Integer currentStatus, @Param(value = "id") Integer id);
+              @Param(value = "currentStatus") Integer currentStatus, @Param(value = "deliveryAddress") String deliveryAddress,
+              @Param(value = "id") Integer id);
 
     List<Project> findAllByOwner(User user);
     List<Project> findAllByOwnerAndCurrentStatus(User user, Integer status);

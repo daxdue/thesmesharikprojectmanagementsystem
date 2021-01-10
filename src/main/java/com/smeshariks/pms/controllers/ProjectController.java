@@ -4,10 +4,7 @@ import com.smeshariks.pms.dto.ProjectDto;
 import com.smeshariks.pms.dto.SmesharikDto;
 import com.smeshariks.pms.entities.*;
 import com.smeshariks.pms.services.*;
-import com.smeshariks.pms.utils.CostValidator;
-import com.smeshariks.pms.utils.DateValidator;
-import com.smeshariks.pms.utils.SmesharikDtoConverter;
-import com.smeshariks.pms.utils.Validator;
+import com.smeshariks.pms.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -32,12 +29,16 @@ public class ProjectController {
     private static final String INACTIVE = "inactive";
     private static final String COMPLETED = "completed";
     private static final String REJECTED = "rejected";
+    private static final String IN_DELIVERY = "delivery";
+    private static final String ARCHIVED = "archived";
 
     private ProjectService projectService;
     private TimingsService timingsService;
     private ProjectStatusService projectStatusService;
     private TaskService taskService;
     private TaskStatusService taskStatusService;
+    private final MaterialService materialService;
+    private final MaterialRequestService materialRequestService;
 
     @Autowired
     private UserService userService;
@@ -45,12 +46,15 @@ public class ProjectController {
     @Autowired
     public ProjectController(ProjectService projectService, TimingsService timingsService,
                              ProjectStatusService projectStatusService, TaskService taskService,
-                             TaskStatusService taskStatusService) {
+                             TaskStatusService taskStatusService, MaterialService materialService,
+                             MaterialRequestService materialRequestService) {
         this.projectService = projectService;
         this.timingsService = timingsService;
         this.projectStatusService = projectStatusService;
         this.taskService = taskService;
         this.taskStatusService = taskStatusService;
+        this.materialService = materialService;
+        this.materialRequestService = materialRequestService;
     }
 
     @GetMapping("/create")
@@ -156,10 +160,21 @@ public class ProjectController {
                     projects = projectService.findByStatus(Statuses.COMPLETED);
                     break;
 
+                case IN_DELIVERY:
+                    projects = projectService.findByStatus(Statuses.IN_DEVIVERY);
+                    break;
+
                 case REJECTED:
                     projects = projectService.findByStatus(Statuses.REJECTED);
                     break;
+
+                case ARCHIVED:
+                    projects = projectService.findByStatus(Statuses.ARCHIVATED);
+                    break;
             }
+
+        } else if(user.getUserRole() == UserRole.WAREHOUSEMAN) {
+            projects = projectService.findByStatus(Statuses.IN_DEVIVERY);
 
         } else {
 
@@ -180,8 +195,16 @@ public class ProjectController {
                     projects = projectService.findByUserAndStatus(user, Statuses.COMPLETED);
                     break;
 
+                case IN_DELIVERY:
+                    projects = projectService.findByUserAndStatus(user, Statuses.IN_DEVIVERY);
+                    break;
+
                 case REJECTED:
                     projects = projectService.findByUserAndStatus(user, Statuses.REJECTED);
+                    break;
+
+                case ARCHIVED:
+                    projects = projectService.findByUserAndStatus(user, Statuses.ARCHIVATED);
                     break;
             }
         }
@@ -219,37 +242,60 @@ public class ProjectController {
         smesharikDto.setName(user.getName());
         smesharikDto.setUserRole(user.getUserRole());
 
-        if((project.getTsStart() != null) && (project.getTsStop() != null)) {
-            DateValidator dateValidator = new DateValidator(project.getTsStart(), project.getTsStop());
-            Validator costValidator = new CostValidator(project.getCost());
+        Project projectDB = projectService.findProject(id);
 
-            if(dateValidator.isValid() && costValidator.isValid()) {
+        if(projectDB != null) {
+            if((project.getTsStart() != null) && (project.getTsStop() != null)) {
+                DateValidator dateValidator = new DateValidator(project.getTsStart(), project.getTsStop());
+                Validator costValidator = new CostValidator(project.getCost());
 
-                timings.setStartTime(dateValidator.getTimestamps()[0]);
-                timings.setDeadTime(dateValidator.getTimestamps()[1]);
+                if(dateValidator.isValid() && costValidator.isValid()) {
 
-                project.setStartTime(dateValidator.getTimestamps()[0]);
-                project.setDeadTime(dateValidator.getTimestamps()[1]);
+                    timings.setStartTime(dateValidator.getTimestamps()[0]);
+                    timings.setDeadTime(dateValidator.getTimestamps()[1]);
 
+                    projectDB.setStartTime(dateValidator.getTimestamps()[0]);
+                    projectDB.setDeadTime(dateValidator.getTimestamps()[1]);
+                    projectDB.setCost(project.getCost());
+                    projectDB.setCurrentStatus(project.getCurrentStatus());
+                    try {
+                        if(project.getDeliveryAddress() != null) {
+                            projectDB.setDeliveryAddress(project.getDeliveryAddress());
+                        }
+                    } catch (NullPointerException e) {
+                        e.printStackTrace();
+                    }
 
+                    ProjectStatus projectStatus = new ProjectStatus();
+                    projectStatus.setStatus(project.getStatus().getName());
+                    projectStatus.setTimestamp(new Timestamp(new Date().getTime()));
+                    projectStatus.setProject(projectDB);
+
+                    projectService.updateProject(projectDB);
+                    projectStatusService.saveProjectStatus(projectStatus);
+
+                }
+            } else {
                 ProjectStatus projectStatus = new ProjectStatus();
                 projectStatus.setStatus(project.getStatus().getName());
                 projectStatus.setTimestamp(new Timestamp(new Date().getTime()));
                 projectStatus.setProject(project);
 
-                projectService.updateProject(project);
+                projectDB.setCost(project.getCost());
+                projectDB.setCurrentStatus(project.getCurrentStatus());
+                try {
+                    if(project.getDeliveryAddress() != null) {
+                        projectDB.setDeliveryAddress(project.getDeliveryAddress());
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                projectService.updateProject(projectDB);
                 projectStatusService.saveProjectStatus(projectStatus);
-
             }
-        } else {
-            ProjectStatus projectStatus = new ProjectStatus();
-            projectStatus.setStatus(project.getStatus().getName());
-            projectStatus.setTimestamp(new Timestamp(new Date().getTime()));
-            projectStatus.setProject(project);
-
-            projectService.updateProject(project);
-            projectStatusService.saveProjectStatus(projectStatus);
         }
+
+
 
         return "redirect:/project/" + project.getId();
     }
@@ -287,8 +333,22 @@ public class ProjectController {
         //Поиск возможных исполнителей для новой задачи
         List<User> executors = userService.findUsersByRole(new Role(3, "ROLE_WORKER"));
         List<Task> tasks = taskService.findTasksByProject(project);
+        //Определение степени завершенности проекта
+        boolean hasIncompletedTasks = false;
+        if(tasks != null) {
+            for(Task task : tasks) {
+                if(task.getStatuses().size() > 0) {
+                    if(task.getLastStatus().getStatusValue() == Statuses.IN_WORK ||
+                            task.getLastStatus().getStatusValue() == Statuses.IN_WORK) {
+                        hasIncompletedTasks = true;
+                        break;
+                    }
+                }
+            }
+        }
 
         model.addAttribute("tasks", tasks);
+        model.addAttribute("incompletedTasks", hasIncompletedTasks);
         model.addAttribute("executors", executors);
         model.addAttribute("user", smesharikDto);
         model.addAttribute("project", project);
@@ -298,6 +358,34 @@ public class ProjectController {
 
     }
 
+    @GetMapping("/calculate/{id}")
+    public String costCalculation(@PathVariable Integer id, Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+
+        Project project = projectService.findProject(id);
+        int materialsCost = 0;
+        int workCost = 0;
+        if(project != null) {
+            List<MaterialRequest> projectMaterials = materialRequestService.findRequestsByProject(project);
+            List<Task> projectTasks = taskService.findTasksByProject(project);
+            //Расчет итоговой стоимости проекта
+            ProjectCostCalculator projectCostCalculator = new ProjectCostCalculator(projectMaterials, projectTasks);
+            materialsCost = projectCostCalculator.calculateMaterialsCost();
+            workCost = projectCostCalculator.calculateWorkingHours();
+
+        }
+
+        model.addAttribute("user", smesharikDto);
+        model.addAttribute("project", project);
+        model.addAttribute("materialsCost", materialsCost);
+        model.addAttribute("workCost", workCost);
+        return "project_cost";
+    }
 
     /*
     @PutMapping("/{id}")
