@@ -1,28 +1,19 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-    <title>Spring Boot WebSocket Chat Application</title>
-    <link rel="stylesheet" href="/css/chat.css" />
+    <title>Чат | S P M S</title>
+    <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
+    <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
+    <link rel="stylesheet" href="/css/chat.css">
 </head>
 <body>
 <noscript>
     <h2>Sorry! Your browser doesn't support Javascript</h2>
 </noscript>
-<div id="username-page">
-    <div class="username-page-container">
-        <h1 class="title">Type your username</h1>
-        <form id="usernameForm" name="usernameForm">
-            <div class="form-group">
-                <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
-            </div>
-            <div class="form-group">
-                <button type="submit" class="accent username-submit">Start Chatting</button>
-            </div>
-        </form>
-    </div>
-</div>
-<div id="chat-page" class="hidden">
+
+<!--div id="chat-page" class="hidden">
     <div class="chat-container">
         <div class="chat-header">
             <h2>Spring WebSocket Chat Demo</h2>
@@ -41,9 +32,156 @@
             </div>
         </form>
     </div>
+</div-->
+<input type="hidden" id="sender" th:value="${user.username}"/>
+<input type="hidden" id="friend" th:value="${friend}"/>
+<div id="username-page" hidden="hidden">
+
+    <div class="username-page-container">
+        <h1 class="title">Type your username</h1>
+        <form id="usernameForm" name="usernameForm">
+            <div class="form-group">
+                <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+            </div>
+            <div class="form-group">
+                <button type="submit" class="accent username-submit">Start Chatting</button>
+            </div>
+        </form>
+    </div>
 </div>
+    <body onload="connectServer()">
+    <nav class="navbar navbar-expand-md navbar-light sticky-top bg-light shadow-sm">
+        <a class="navbar-brand" th:href="@{/}">S P M S</a>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+                </li>
+
+            </ul>
+        </div>
+        <a class="btn btn-link my-2 my-sm-0" th:href="@{/logout}" role="button">Выход</a>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <h5 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1">
+                        <span>Профиль</span>
+                    </h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-4">
+                            <a class="nav-link active" href="#">
+                                <span data-feather="home" th:text="${user.name}"></span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-1 mb-1 text-muted">
+                                <span th:text="${user.getUserRole().displayValue}"></span>
+                            </h6>
+                        </li>
+                    </ul>
+
+
+
+                    <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-1">
+                                <a class="nav-link" th:href="@{/project/create}">
+                                    <span data-feather="home">Создать проект</span>
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-1">
+                            <a class="nav-link" th:href="@{/archive}">
+                                <span data-feather="home">Архив</span>
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <!--div sec:authorize="hasRole('ROLE_ADMIN')">
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-1">
+                                <a class="nav-link" href="#">
+                                    <span data-feather="home">Управление пользователями</span>
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-1">
+                                <a class="nav-link" href="#">
+                                    <span data-feather="home">Склад</span>
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <ul class="nav flex-column">
+                            <li class="nav-item mb-1">
+                                <a class="nav-link" href="#">
+                                    <span data-feather="home">Архив</span>
+                                    <span class="sr-only">(current)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div-->
+
+                </div>
+            </nav>
+
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                    <h5 class="my-0 font-weight-normal text-primary">Чат</h5>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div id="chat-page" class="hidden">
+                            <div class="chat-container">
+
+                                <ul id="messageArea">
+                                    <th:block th:each="message : ${messages}">
+                                        <li class="chat-message">
+                                            <i th:style="${message.getAvatarColor()}" th:text="${message.getAvatarText()}"></i>
+                                            <!--i style="background-color: rgb(255, 133, 175);"></i-->
+                                            <span th:text="${message.getSenderId()}"></span>
+                                            <p th:text="${message.getContent()}"></p>
+                                        </li>
+                                    </th:block>
+                                </ul>
+                                <form id="messageForm" name="messageForm">
+
+                                    <div class="form-group">
+                                        <div class="input-group clearfix">
+                                            <input type="text" id="message" placeholder="Введите сообщение..." autocomplete="off" class="form-control"/>
+                                            <button type="submit" class="primary">Отправить</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+    </body>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 <script src="/js/chat.js"></script>
+<script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.smeshariks.pms.controllers;
 
+import com.smeshariks.pms.dto.SmesharikDto;
 import com.smeshariks.pms.entities.*;
 import com.smeshariks.pms.services.*;
 import com.smeshariks.pms.utils.MaterialsCalculator;
@@ -45,6 +46,18 @@ public class MainController {
 
     @GetMapping("/chat")
     public String chatPage(Model model) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setUsername(user.getUsername());
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+        model.addAttribute("user", smesharikDto);
+        if(smesharikDto.getUsername().equals("pinhead")) {
+            model.addAttribute("friend", "barash");
+        } else {
+            model.addAttribute("friend", "pinhead");
+        }
         return "chat";
     }
 

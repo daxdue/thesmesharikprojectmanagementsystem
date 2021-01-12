@@ -7,10 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/*
 @Entity
 @Table(name = "chat_room", schema = "public")
 @Data
 @NoArgsConstructor
+
+ */
 public class ChatRoom {
 
     @Id
