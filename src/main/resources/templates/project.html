@@ -19,7 +19,7 @@
                 <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+                <a class="nav-link" th:href="@{/chatrooms}">Переписки</a>
             </li>
 
         </ul>
@@ -182,9 +182,15 @@
                     <div class="col-4">
 
                         <div sec:authorize="hasRole('ROLE_ADMIN')">
-                            <div class="row mb-3 align-items-center">
-                                <button type="button" class="btn btn-primary">Чат с заказчиком</button>
-                            </div>
+                            <th:block th:if="${project.owner.username} != ${user.username}">
+                                <div class="row mb-3 align-items-center">
+                                    <!--button type="button" class="btn btn-primary">Чат с заказчиком</button-->
+                                    <form th:action="@{/chat/{owner}(owner=${project.owner.username})}" method="get">
+                                        <button type="submit" class="btn btn-primary">Чат с заказчиком</button>
+                                    </form>
+                                </div>
+                            </th:block>
+
                             <th:block th:if="${project.getCurrentStatus() == 2}">
                                 <div class="row mb-3 align-items-center">
                                     <form th:action="@{/project/calculate/{id}(id=${project.id})}" th:object="${project}" method="get">
@@ -229,7 +235,10 @@
 
                         <div sec:authorize="hasRole('ROLE_CUSTOMER')">
                             <div class="row mb-3 align-items-center">
-                                <button type="button" class="btn btn-primary">Чат с исполнителем</button>
+                                <!--button type="button" class="btn btn-primary">Чат с заказчиком</button-->
+                                <form th:action="@{/chat/{manager}(manager=${manager})}" method="get">
+                                    <button type="submit" class="btn btn-primary">Чат с заказчиком</button>
+                                </form>
                             </div>
                             <th:block th:if="${project.currentStatus == 1}">
                                 <div class="row mb-3 align-items-center">

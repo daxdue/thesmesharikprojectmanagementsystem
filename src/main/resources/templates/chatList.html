@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <title>Проекты | S P M S</title>
+    <title>Переписки | S P M S</title>
     <link th:href="@{/webjars/bootstrap/4.5.2/css/bootstrap.min.css}" rel="stylesheet" media="screen">
     <link th:href="@{/css/dashboard.css}" rel="stylesheet" media="screen">
     <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
@@ -103,61 +103,29 @@
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-                <h5 class="my-0 font-weight-normal text-primary">Архив</h5>
+                <h5 class="my-0 font-weight-normal text-primary">Переписки</h5>
             </div>
 
-                <div class="container">
-                    <div class="row">
-
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Проекты</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архивные проекты</h6>
-                                        <a th:href="@{/archive/get(type='projects')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_WORKER')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Задачи</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архивные задачи</h6>
-                                        <a th:href="@{/archive/get(type='tasks')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_WAREHOUSEMAN')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Запросы</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архив запросов</h6>
-                                        <a th:href="@{/archive/get(type='requests')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Заказы</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архив заказов</h6>
-                                        <a th:href="@{/archive/get(type='orders')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
+            <div class="container">
+                <div class="row">
+                    <th:block th:each="room : ${rooms}">
+                        <div class="col-6">
+                            <div class="card mb-5" style="width: 18rem">
+                                <div class="card-body">
+                                    <!--h5 class="card-title" th:text="${room.getChatId()}"></h5-->
+                                    <h5 class="card-title"><span th:text="${room.getSenderId()}"></span> и <span th:text="${room.getRecipientId()}"></span></h5>
+                                    <a th:href="@{/chat/chatroom/{room}(room=${room.chatId})}" class="card-link stretched-link">Перейти</a>
                                 </div>
                             </div>
                         </div>
+                    </th:block>
 
-                    </div>
                 </div>
-        </main>
+
+            </div>
     </div>
+    </main>
+</div>
 </div>
 
 <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>

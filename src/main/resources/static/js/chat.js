@@ -109,6 +109,7 @@ function sendMessage(event) {
             timestamp: new Date(),
         };
         stompClient.send("/app/chat", {}, JSON.stringify(message));
+        messageInput.value = '';
     }
     event.preventDefault();
 }

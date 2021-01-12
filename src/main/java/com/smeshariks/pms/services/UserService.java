@@ -48,6 +48,11 @@ public class UserService implements UserDetailsService {
         return userFromDb.orElse(new User());
     }
 
+    public User findUserByUsername(String username) {
+        User user = userRepository.findByUsername(username);
+        return user;
+    }
+
     public List<User> allUsers() {
         return userRepository.findAll();
     }

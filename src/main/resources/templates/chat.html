@@ -58,7 +58,7 @@
                     <a class="nav-link" th:href="@{/main}">Главная <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/cluster/add}">Переписки</a>
+                    <a class="nav-link" th:href="@{/chatrooms}">Переписки</a>
                 </li>
 
             </ul>
@@ -148,7 +148,9 @@
                     <div class="card-body">
                         <div id="chat-page" class="hidden">
                             <div class="chat-container">
-
+                                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
+                                    <h6 class="my-0 font-weight-normal text-primary" th:text="${chatTitle}"></h6>
+                                </div>
                                 <ul id="messageArea">
                                     <th:block th:each="message : ${messages}">
                                         <li class="chat-message">

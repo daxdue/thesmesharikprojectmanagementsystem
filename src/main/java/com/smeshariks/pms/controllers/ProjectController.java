@@ -306,6 +306,7 @@ public class ProjectController {
 
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setUsername(user.getUsername());
         smesharikDto.setId(user.getId());
         smesharikDto.setName(user.getName());
         smesharikDto.setUserRole(user.getUserRole());
@@ -332,6 +333,7 @@ public class ProjectController {
 
         //Поиск возможных исполнителей для новой задачи
         List<User> executors = userService.findUsersByRole(new Role(3, "ROLE_WORKER"));
+        List<User> managers = userService.findUsersByRole(new Role(1, "ROLE_ADMIN"));
         List<Task> tasks = taskService.findTasksByProject(project);
         //Определение степени завершенности проекта
         boolean hasIncompletedTasks = false;
@@ -350,6 +352,7 @@ public class ProjectController {
         model.addAttribute("tasks", tasks);
         model.addAttribute("incompletedTasks", hasIncompletedTasks);
         model.addAttribute("executors", executors);
+        model.addAttribute("manager", managers.get(0).getUsername());
         model.addAttribute("user", smesharikDto);
         model.addAttribute("project", project);
         model.addAttribute("projectStatuses", statuses);

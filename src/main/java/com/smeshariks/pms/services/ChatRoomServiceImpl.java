@@ -5,6 +5,8 @@ import com.smeshariks.pms.repositories.ChatRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ChatRoomServiceImpl implements ChatRoomService {
 
@@ -38,5 +40,13 @@ public class ChatRoomServiceImpl implements ChatRoomService {
             chatRoomRepository.save(recipientSender);
             return chatId;
         }
+    }
+
+    public List<ChatRoom> findAllRooms(String senderId) {
+        return chatRoomRepository.findAllBySenderId(senderId);
+    }
+
+    public List<ChatRoom> findRoomByChatId(String chatId) {
+        return chatRoomRepository.findByChatId(chatId);
     }
 }
