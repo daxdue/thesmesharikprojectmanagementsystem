@@ -68,11 +68,11 @@
                     </li>
                 </ul>
 
-                <!--div sec:authorize="hasRole('ROLE_ADMIN')">
+                <div sec:authorize="hasRole('ROLE_ADMIN')">
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
-                            <a class="nav-link" href="#">
-                                <span data-feather="home">Управление пользователями</span>
+                            <a class="nav-link" th:href="@{/project/get(type='active')}">
+                                <span data-feather="home">Проекты</span>
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -80,8 +80,8 @@
 
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
-                            <a class="nav-link" href="#">
-                                <span data-feather="home">Склад</span>
+                            <a class="nav-link active" th:href="@{/task}">
+                                <span data-feather="home">Задачи</span>
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
@@ -89,13 +89,13 @@
 
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
-                            <a class="nav-link" href="#">
-                                <span data-feather="home">Архив</span>
+                            <a class="nav-link" th:href="@{/team}">
+                                <span data-feather="home">Команда</span>
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
                     </ul>
-                </div-->
+                </div>
 
             </div>
         </nav>

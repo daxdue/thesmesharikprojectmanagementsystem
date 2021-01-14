@@ -8,14 +8,14 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
-public class SignUpUiTest {
+public class UiTest {
 
     @BeforeClass
     public static void setUp() {
         closeWebDriver();
     }
 
-    //@Test
+    @Test
     public void userCanCreateNewAccount() {
         open("/signup");
         $(By.name("username")).setValue("testaccount");
@@ -24,7 +24,7 @@ public class SignUpUiTest {
         $(byText("Зарегистрироваться")).click();
     }
 
-    //@Test
+    @Test
     public void userCanLogin() {
         open("/login");
         $(By.name("username")).setValue("pinhead");
@@ -34,7 +34,7 @@ public class SignUpUiTest {
     }
 
 
-    //@Test
+    @Test
     public void userCanCreateNewProject() {
         open("/login");
         $(By.name("username")).setValue("alien");
@@ -52,7 +52,7 @@ public class SignUpUiTest {
         closeWebDriver();
     }
 
-    //@Test
+    @Test
     public void userCanCreateNewTask() {
         open("/login");
         $(By.name("username")).setValue("pinhead");
@@ -70,7 +70,7 @@ public class SignUpUiTest {
         closeWebDriver();
     }
 
-    //@Test
+    @Test
     public void userCanCreateNewMaterial() {
         open("/login");
         $(By.name("username")).setValue("barash");
@@ -107,6 +107,6 @@ public class SignUpUiTest {
         closeWebDriver();
     }
 
-    
+
 
 }

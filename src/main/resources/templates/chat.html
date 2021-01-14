@@ -8,7 +8,7 @@
     <link th:href="@{/css/lk.css}" rel="stylesheet" media="screen">
     <link rel="stylesheet" href="/css/chat.css">
 </head>
-<body>
+<!--body-->
 <noscript>
     <h2>Sorry! Your browser doesn't support Javascript</h2>
 </noscript>
@@ -107,11 +107,11 @@
                         </li>
                     </ul>
 
-                    <!--div sec:authorize="hasRole('ROLE_ADMIN')">
+                    <div sec:authorize="hasRole('ROLE_ADMIN')">
                         <ul class="nav flex-column">
                             <li class="nav-item mb-1">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="home">Управление пользователями</span>
+                                <a class="nav-link" th:href="@{/project/get(type='active')}">
+                                    <span data-feather="home">Проекты</span>
                                     <span class="sr-only">(current)</span>
                                 </a>
                             </li>
@@ -119,8 +119,8 @@
 
                         <ul class="nav flex-column">
                             <li class="nav-item mb-1">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="home">Склад</span>
+                                <a class="nav-link" th:href="@{/task}">
+                                    <span data-feather="home">Задачи</span>
                                     <span class="sr-only">(current)</span>
                                 </a>
                             </li>
@@ -128,13 +128,13 @@
 
                         <ul class="nav flex-column">
                             <li class="nav-item mb-1">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="home">Архив</span>
+                                <a class="nav-link" th:href="@{/team}">
+                                    <span data-feather="home">Команда</span>
                                     <span class="sr-only">(current)</span>
                                 </a>
                             </li>
                         </ul>
-                    </div-->
+                    </div>
 
                 </div>
             </nav>
@@ -185,5 +185,5 @@
 <script src="/js/chat.js"></script>
 <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
-</body>
+<!--/body-->
 </html>

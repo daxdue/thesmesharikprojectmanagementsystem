@@ -21,12 +21,12 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/}">Главная <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
+            <!--li class="nav-item">
                 <a class="nav-link">Информация</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link">Контакты</a>
-            </li>
+            </li-->
         </ul>
     </div>
     <!--a class="btn btn-link my-2 my-sm-0" th:href="@{/login}" role="button">Войти</a-->
@@ -113,6 +113,9 @@
                 </div>
             </div-->
 
+            <div th:if="${usernameError}" class="error alert alert-danger" role="alert">
+                Пользователь с таким логином уже существует
+            </div>
             <div class="row">
                 <div class="col mb-3">
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>

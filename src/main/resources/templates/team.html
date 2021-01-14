@@ -61,7 +61,7 @@
 
                 <ul class="nav flex-column">
                     <li class="nav-item mb-1">
-                        <a class="nav-link active" th:href="@{/archive}">
+                        <a class="nav-link" th:href="@{/archive}">
                             <span data-feather="home">Архив</span>
                             <span class="sr-only">(current)</span>
                         </a>
@@ -89,7 +89,7 @@
 
                     <ul class="nav flex-column">
                         <li class="nav-item mb-1">
-                            <a class="nav-link" th:href="@{/team}">
+                            <a class="nav-link active" th:href="@{/team}">
                                 <span data-feather="home">Команда</span>
                                 <span class="sr-only">(current)</span>
                             </a>
@@ -103,61 +103,28 @@
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
 
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 ">
-                <h5 class="my-0 font-weight-normal text-primary">Архив</h5>
+                <h5 class="my-0 font-weight-normal text-primary">Команда</h5>
             </div>
 
-                <div class="container">
-                    <div class="row">
+            <div class="container">
+                <div class="row">
 
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_CUSTOMER')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Проекты</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архивные проекты</h6>
-                                        <a th:href="@{/archive/get(type='projects')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
+                    <th:block th:each="member : ${team}">
+                        <div class="col-4 mb-3">
+                            <div class="card mb-5" style="width: 18rem">
+                                <div class="card-body">
+                                    <h5 class="card-title" th:text="${member.name}"></h5>
+                                    <h6 class="card-subtitle mb-2 text-muted" th:text="${member.userRole.getDisplayValue()}"></h6>
 
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_WORKER')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Задачи</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архивные задачи</h6>
-                                        <a th:href="@{/archive/get(type='tasks')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-                                </div>
-                            </div>
-
-                            <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_WAREHOUSEMAN')">
-                                <div class="col-6">
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Запросы</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архив запросов</h6>
-                                        <a th:href="@{/archive/get(type='requests')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
-
-                                <div class="card mb-5" style="width: 18rem">
-                                    <div class="card-body">
-                                        <h5 class="card-title">Заказы</h5>
-                                        <h6 class="card-subtitle mb-2 text-muted">Архив заказов</h6>
-                                        <a th:href="@{/archive/get(type='orders')}" class="card-link stretched-link">Подробнее</a>
-                                    </div>
-                                </div>
+                                    <a th:href="@{/chat/{user}(user=${member.username})}" class="card-link stretched-link">Написать</a>
                                 </div>
                             </div>
                         </div>
-
-                    </div>
-                <!--/div-->
-        </main>
-    </div>
+                    </th:block>
+                </div>
+            </div>
+    </main>
+</div>
 </div>
 
 <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>

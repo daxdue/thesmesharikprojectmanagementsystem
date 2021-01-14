@@ -128,7 +128,7 @@ public class MainController {
             }
 
             List<User> allWorkersAmount = userService.findAllByRoleName(UserRole.WORKER.getDatabaseRole());
-
+            List<User> warehousemans = userService.findAllByRoleName(UserRole.WAREHOUSEMAN.getDatabaseRole());
             int freeWorkers = 0;
             int busyWorkers = 0;
 
@@ -152,7 +152,7 @@ public class MainController {
                     }
                 }
 
-                model.addAttribute("workersAmount", allWorkersAmount.size());
+                model.addAttribute("workersAmount", allWorkersAmount.size() + warehousemans.size());
                 model.addAttribute("freeWorkers", freeWorkers);
                 model.addAttribute("busyWorkers", busyWorkers);
             }
@@ -283,6 +283,42 @@ public class MainController {
 
 
         return "main";
+    }
+
+
+    @GetMapping("/team")
+    public String getTeam(Model model) {
+
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SmesharikDto smesharikDto = new SmesharikDto();
+        smesharikDto.setId(user.getId());
+        smesharikDto.setName(user.getName());
+        smesharikDto.setUserRole(user.getUserRole());
+        model.addAttribute("user", smesharikDto);
+
+        List<User> workers = userService.findUsersByRole(new Role(3, "ROLE_WORKER"));
+        List<User> warehouseman = userService.findUsersByRole(new Role(5, "ROLE_WAREHOUSEMAN"));
+        List<User> managers = userService.findUsersByRole(new Role(4, "ROLE_MANAGER"));
+
+        List<User> users = new ArrayList<>();
+        users.addAll(workers);
+        users.addAll(warehouseman);
+        users.addAll(managers);
+
+        List<SmesharikDto> team = new ArrayList<>();
+
+        for(User usr : users) {
+            SmesharikDto smesharikDto1 = new SmesharikDto();
+            smesharikDto1.setUsername(usr.getUsername());
+            smesharikDto1.setId(usr.getId());
+            smesharikDto1.setName(usr.getName());
+            smesharikDto1.setUserRole(usr.getUserRole());
+            team.add(smesharikDto1);
+        }
+
+        model.addAttribute("team", team);
+
+        return "team";
     }
 }
 

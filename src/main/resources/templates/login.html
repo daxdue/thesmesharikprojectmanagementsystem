@@ -19,12 +19,12 @@
             <li class="nav-item">
                 <a class="nav-link" th:href="@{/}">Главная <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
+            <!--li class="nav-item">
                 <a class="nav-link">Информация</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link">Контакты</a>
-            </li>
+            </li-->
         </ul>
     </div>
 </nav>
@@ -53,7 +53,7 @@
                 Неверное имя пользователя или пароль
             </div>
 
-            <div th:if="${user}" class="error alert alert-danger" role="alert">
+            <!--div th:if="${user}" class="error alert alert-danger" role="alert"-->
 
             </div>
             <div class="row">
@@ -67,7 +67,7 @@
                     <a th:href="@{/signup}" class="btn btn-link">Нет аккаунта? Зарегистрироваться</a>
                 </div>
             </div>
-        </div>
+        <!-/div-->
 
         <p class="mt-5 mb-3 text-muted">&copy; Smeshariks Inc. 2020</p>
     </form>

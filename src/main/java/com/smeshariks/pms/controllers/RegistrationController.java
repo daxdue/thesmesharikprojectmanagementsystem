@@ -35,7 +35,7 @@ public class RegistrationController {
         */
 
         if(!userService.saveUser(userForm)) {
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
+            model.addAttribute("usernameError", true);
             return "registration";
         }
 
@@ -44,8 +44,8 @@ public class RegistrationController {
 
     @RequestMapping("/login-error")
     public String loginError(Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("user", user);
+        //User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //model.addAttribute("user", user);
         model.addAttribute("loginError", true);
         return "login";
     }
