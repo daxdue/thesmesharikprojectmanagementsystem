@@ -243,7 +243,7 @@
                             <th:block th:if="${project.currentStatus == 1}">
                                 <div class="row mb-3 align-items-center">
                                     <form th:action="@{/project/update/{id}(id=${project.id})}" method="get">
-                                        <button type="submit" class="btn btn-primary">Редактировать</button>
+                                        <button type="submit" name="editbtn" class="btn btn-primary">Редактировать</button>
                                     </form>
 
                                 </div>

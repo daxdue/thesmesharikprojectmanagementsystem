@@ -283,7 +283,7 @@
                                             <div class="progress-bar progress-bar-striped bg-info" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${project.calculateProgress()}" th:style="'width:' + ${project.calculateProgress()} + '%'"></div>
                                         </div>
 
-                                        <a th:href="@{/project/{id}(id=${project.id})}" class="card-link stretched-link">К деталям</a>
+                                        <a th:href="@{/project/{id}(id=${project.id})}" th:attr="name=${project.id}" class="card-link stretched-link">К деталям</a>
                                     </div>
                                 </div>
                             </div>

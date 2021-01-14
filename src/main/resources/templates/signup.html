@@ -19,21 +19,21 @@
         <div class="row">
             <div class="col mb-2">
                 <!--==label class="sr-only">Username</label-->
-                <input type="text" class="form-control" th:field="*{username}" placeholder="Имя пользователя" required>
+                <input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Имя пользователя" required>
             </div>
         </div>
 
         <div class="row">
             <div class="col mb-2">
                 <!--label class="sr-only">name</label-->
-                <input type="text" class="form-control" th:field="*{name}" placeholder="Полное имя" required>
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Полное имя" required>
             </div>
         </div>
 
         <div class="row">
             <div class="col mb-2">
                 <!--label for="inputPassword" class="sr-only">Password</label-->
-                <input type="password" class="form-control" th:field="*{password}" placeholder="Пароль" required>
+                <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Пароль" required>
             </div>
         </div>
 
@@ -44,12 +44,12 @@
                     <div class="row">
                         <div class="col">
                             <label class="btn btn-light active">
-                                <input type="radio" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).CUSTOMER}" checked> Заказчик
+                                <input type="radio" name="role" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).CUSTOMER}" checked> Заказчик
                             </label>
                         </div>
                         <div class="col">
                             <label class="btn btn-light">
-                                <input type="radio" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).WORKER}"> Работник
+                                <input type="radio" name="role" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).WORKER}"> Работник
                             </label>
                         </div>
                     </div>
@@ -57,12 +57,12 @@
                     <div class="row">
                         <div class="col mb-0">
                             <label class="btn btn-light">
-                                <input type="radio" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).MANAGER}"> Менеджер
+                                <input type="radio" name="role" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).MANAGER}"> Менеджер
                             </label>
                         </div>
                         <div class="col mb-0">
                             <label class="btn btn-light">
-                                <input type="radio" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).WAREHOUSEMAN}"> Кладовщик
+                                <input type="radio" name="role" th:field="*{userRole}" th:value="${T(com.smeshariks.pms.entities.UserRole).WAREHOUSEMAN}"> Кладовщик
                             </label>
                         </div>
                     </div>
@@ -88,7 +88,7 @@
 </body>
 
 <script th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
-<script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script>
+<!--script th:src="@{/webjars/popper/1.16.0/popper.min.js}"></script-->
 <script th:src="@{/webjars/bootstrap/4.5.2/js/bootstrap.min.js}"></script>
 </body>
 </html>
